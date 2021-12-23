@@ -10,7 +10,7 @@ const corsOptions = {
     credentials: true,
 };
 app.use(cors());
-
+//형진테스트
 const connect = require("./models");
 connect();
 
