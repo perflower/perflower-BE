@@ -11,6 +11,7 @@ const corsOptions = {
 };
 app.use(cors());
 //형진테스트
+//형진 테스트 2
 const connect = require("./models");
 connect();
 
