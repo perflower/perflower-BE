@@ -1,22 +1,24 @@
-const mongoose = require("mongoose");
+const Sequelize = require("sequelize");
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config")[env];
+const User = require("./user");
 
-const connect = () => {
-    mongoose
-        .connect("mongodb://localhost:27017/perfume", {
-            // "mongodb://test:test@localhost:27017/admin"
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            ignoreUndefined: true,
-        })
-        .then(() => console.log("Database connected!"))
-        .catch((err) => {
-            console.error(err);
-        });
-};
+const db = {};
+const sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+);
 
-// connect
-mongoose.connection.on("error", (err) => {
-    console.error("몽고디비 연걸 실패:", err);
-});
+db.sequelize = sequelize;
 
-module.exports = connect;
+db.User = User;
+
+User.init(sequelize);
+
+User.associate(db);
+
+db.sequelize = sequelize;
+
+module.exports = db;
