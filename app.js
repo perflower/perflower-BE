@@ -3,15 +3,15 @@ const app = express();
 const cors = require("cors");
 const config = require("./config");
 const { sequelize } = require("./models");
-const session = require('express-session');
-const dotenv = require('dotenv');
-const passport = require('passport');
-const axios = require('axios');
-const nunjucks = require('nunjucks');
-const qs = require('qs');
+const session = require("express-session");
+const dotenv = require("dotenv");
+const passport = require("passport");
+const axios = require("axios");
+const nunjucks = require("nunjucks");
+const qs = require("qs");
 dotenv.config();
 
-const passportConfig = require('./api/passport');
+const passportConfig = require("./api/passport");
 
 const corsOptions = {
     "Access-Control-Allow-Origin": "*",
@@ -29,20 +29,21 @@ sequelize
     .catch((err) => {
         console.error(err);
     });
-    passportConfig(); // 패스포트 설정
-
+passportConfig(); // 패스포트 설정
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(session({
-    resave: false,
-    saveUninitialized: false,
-    secret: process.env.COOKIE_SECRET,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-    },
-  }));
+app.use(
+    session({
+        resave: false,
+        saveUninitialized: false,
+        secret: process.env.COOKIE_SECRET,
+        cookie: {
+            httpOnly: true,
+            secure: false,
+        },
+    })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -59,7 +60,7 @@ app.use((err, req, res, next) => {
     res.locals.message = err.message;
     res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
     res.status(err.status || 500);
-    // res.render("error");
+    res.render("error");
 });
 
 app.listen(config.port, () => {
