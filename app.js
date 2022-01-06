@@ -3,6 +3,15 @@ const app = express();
 const cors = require("cors");
 const config = require("./config");
 const { sequelize } = require("./models");
+const session = require('express-session');
+const dotenv = require('dotenv');
+const passport = require('passport');
+const axios = require('axios');
+const nunjucks = require('nunjucks');
+const qs = require('qs');
+dotenv.config();
+
+const passportConfig = require('./api/passport');
 
 const corsOptions = {
     "Access-Control-Allow-Origin": "*",
@@ -20,9 +29,22 @@ sequelize
     .catch((err) => {
         console.error(err);
     });
+    passportConfig(); // 패스포트 설정
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(session({
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    },
+  }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 const index = require("./api/routes");
 app.use("/api", index);
