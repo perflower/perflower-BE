@@ -88,10 +88,18 @@ module.exports = class Perfume extends Sequelize.Model {
                 modelName: "Perfume",
                 tableName: "perfumes",
                 paranoid: false,
-                charset: "utf8",
-                collate: "utf8_general_ci",
+                charset: "utf8mb4",
+                collate: "utf8mb4_general_ci",
             }
         );
     }
-    static associate(db) {}
+    static associate(db) {
+        db.Perfume.hasMany(db.Review, {
+            foreignKey: "perfumeId",
+            sourceKey: "perfumeId",
+        });
+    }
+    // static associate(db) {
+    //     db.Perfume.belongsToMany(db.User, { through: "perfumeLikes" });
+    // }
 };

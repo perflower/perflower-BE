@@ -47,18 +47,22 @@ module.exports = class Review extends Sequelize.Model {
                 seasonSpring: {
                     type: Sequelize.BOOLEAN,
                     allowNull: true,
+                    defaultValue: 0,
                 },
                 seasonSummer: {
                     type: Sequelize.BOOLEAN,
                     allowNull: true,
+                    defaultValue: 0,
                 },
                 seasonFall: {
                     type: Sequelize.BOOLEAN,
                     allowNull: true,
+                    defaultValue: 0,
                 },
                 seasonWinter: {
                     type: Sequelize.BOOLEAN,
                     allowNull: true,
+                    defaultValue: 0,
                 },
                 createdAt: {
                     type: Sequelize.DATE,
@@ -98,7 +102,7 @@ module.exports = class Review extends Sequelize.Model {
             onDelete: "CASCADE",
         });
         db.Review.belongsToMany(db.User, {
-            through: "reviewLikes",
+            through: "reviewLike",
             as: "Liker",
         });
     }

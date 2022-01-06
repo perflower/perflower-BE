@@ -1,6 +1,4 @@
-const Sequelize = require("sequelize");
 
-module.exports = class User extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
@@ -67,17 +65,25 @@ module.exports = class User extends Sequelize.Model {
         },
       },
       {
-        sequelize,
-        timestamps: false,
-        underscored: false,
-        modelName: "User",
-        tableName: "users",
-        paranoid: false,
-        charset: "utf8",
-        collate: "utf8_general_ci",
+                sequelize,
+                timestamps: false,
+                underscored: false,
+                modelName: "User",
+                tableName: "users",
+                paranoid: false,
+                charset: "utf8mb4",
+                collate: "utf8mb4_general_ci",
       }
     );
   }
+    static associate(db) {
+        db.User.hasMany(db.Review, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+        });
+        // db.User.belongsToMany(db.Perfume, { through: "perfumeLikes" });
+        // db.User.belongsToMany(db.Review, { through: "reviewLikes" });
+    }
   static associate(db) {
 
     db.User.belongsToMany(db.User, {

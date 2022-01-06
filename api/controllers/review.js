@@ -13,6 +13,10 @@ reviewPost = async (req, res) => {
         indexTone,
         indexBody,
         indexDesign,
+        seasonSpring,
+        seasonSummer,
+        seasonFall,
+        seasonWinter,
         season,
         userId,
     } = req.body;
@@ -28,6 +32,10 @@ reviewPost = async (req, res) => {
         indexTone: indexTone,
         indexBody: indexBody,
         indexDesign: indexDesign,
+        seasonSpring: seasonSpring,
+        seasonSummer: seasonSummer,
+        seasonFall: seasonFall,
+        seasonWinter: seasonWinter,
         season: season,
         userId: userId,
     });
