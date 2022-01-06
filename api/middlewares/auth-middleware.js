@@ -3,7 +3,7 @@ const Users = require("../../models/user");
 const secretKey = require("../../config").secretKey;
 
 module.exports = (req, res, next) => {
-    console.log("미들웨어를 지나가유");
+    console.log("미들웨어를 지나가유1");
     const { authorization } = req.headers;
     const [tokenType, tokenValue] = authorization.split(" ");
 
