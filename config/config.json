@@ -1,7 +1,7 @@
 {
     "development": {
         "username": "root",
-        "password": "wls7952310++",
+        "password": "1234",
         "database": "perflower",
         "host": "127.0.0.1",
         "dialect": "mysql"
