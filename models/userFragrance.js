@@ -1,25 +1,21 @@
 const Sequelize = require("sequelize");
 
-module.exports = class Fragrance extends Sequelize.Model {
+module.exports = class UserFragrance extends Sequelize.Model {
     static init(sequelize) {
         return super.init(
             {
-                fragId: {
+                userFragranceId: {
                     type: Sequelize.INTEGER,
                     allowNull: false,
                     primaryKey: true,
                     autoIncrement: true,
                 },
-                fragName: {
-                    type: Sequelize.STRING,
+                userId: {
+                    type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                fragImgUrl: {
-                    type: Sequelize.STRING,
-                    allowNull: true,
-                },
-                fragDescription: {
-                    type: Sequelize.TEXT,
+                fragId: {
+                    type: Sequelize.INTEGER,
                     allowNull: true,
                 },
             },
@@ -27,8 +23,8 @@ module.exports = class Fragrance extends Sequelize.Model {
                 sequelize,
                 timestamps: false,
                 underscored: false,
-                modelName: "Fragrance",
-                tableName: "fragrances",
+                modelName: "UserFragrance",
+                tableName: "userFragrances",
                 paranoid: false,
                 charset: "utf8mb4",
                 collate: "utf8mb4_general_ci",
@@ -36,9 +32,17 @@ module.exports = class Fragrance extends Sequelize.Model {
         );
     }
     static associate(db) {
-        db.Fragrance.hasMany(db.Perfume, {
+        db.UserFragrance.belongsTo(db.User, {
+            foreignKey: "userId",
+            targetKey: "userId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
+        });
+        db.UserFragrance.belongsTo(db.Perfume, {
             foreignKey: "fragId",
-            sourceKey: "fragId",
+            targetKey: "fragId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
         });
     }
 };

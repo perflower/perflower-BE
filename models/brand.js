@@ -11,7 +11,7 @@ module.exports = class Brand extends Sequelize.Model {
                     autoIncrement: true,
                 },
                 brandName: {
-                    type: Sequelize.STRING(100),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
             },
@@ -22,10 +22,15 @@ module.exports = class Brand extends Sequelize.Model {
                 modelName: "Brand",
                 tableName: "brands",
                 paranoid: false,
-                charset: "utf8",
-                collate: "utf8_general_ci",
+                charset: "utf8mb4",
+                collate: "utf8mb4_general_ci",
             }
         );
     }
-    static associate(db) {}
+    static associate(db) {
+        db.Brand.hasMany(db.Perfume, {
+            foreignKey: "brandId",
+            sourceKey: "brandId",
+        });
+    }
 };

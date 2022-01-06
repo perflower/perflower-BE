@@ -23,7 +23,7 @@ module.exports = class Perfume extends Sequelize.Model {
                     allowNull: true,
                 },
                 perfumeName: {
-                    type: Sequelize.STRING(200),
+                    type: Sequelize.STRING,
                     allowNull: false,
                 },
                 price: {
@@ -41,7 +41,7 @@ module.exports = class Perfume extends Sequelize.Model {
                     defaultValue: 0,
                 },
                 originImgUrl: {
-                    type: Sequelize.STRING(200),
+                    type: Sequelize.STRING,
                     allowNull: false,
                 },
                 starRatingAvg: {
@@ -97,9 +97,40 @@ module.exports = class Perfume extends Sequelize.Model {
         db.Perfume.hasMany(db.Review, {
             foreignKey: "perfumeId",
             sourceKey: "perfumeId",
+            constraints: false,
+        });
+
+        db.Perfume.hasMany(db.PerfumeLike, {
+            foreignKey: "perfumeId",
+            sourceKey: "perfumeId",
+            constraints: false,
+        });
+
+        db.Perfume.hasMany(db.UserFragrance, {
+            foreignKey: "fragId",
+            sourceKey: "fragId",
+            constraints: false,
+        });
+
+        db.Perfume.belongsTo(db.Fragrance, {
+            foreignKey: "fragId",
+            targetKey: "fragId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
+        });
+
+        db.Perfume.belongsTo(db.Concentration, {
+            foreignKey: "concentrationId",
+            targetKey: "concentrationId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
+        });
+
+        db.Perfume.belongsTo(db.Brand, {
+            foreignKey: "brandId",
+            targetKey: "brandId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
         });
     }
-    // static associate(db) {
-    //     db.Perfume.belongsToMany(db.User, { through: "perfumeLikes" });
-    // }
 };
