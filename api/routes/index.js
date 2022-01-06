@@ -5,8 +5,10 @@ const user = require("./user");
 const perfume = require("./perfume");
 const review = require("./review");
 const fragranceCategory = require("./fragranceCategory");
+const auth = require("./auth")
 
-router.use("/", user);
+router.use('/auth', auth);
+router.use("/user", user);
 router.use("/", perfume, review, fragranceCategory);
 
 module.exports = router;
