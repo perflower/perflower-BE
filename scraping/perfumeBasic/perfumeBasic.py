@@ -32,8 +32,16 @@ pageCnt = 1
 today = datetime.date.today()
 m = str(today.month) + '월'
 
-for a in pages:
-    print(f'페이지 : {pageCnt}')
+aList = soup0.select('#c201_goods > div > a')
+aListCnt = int(len(aList))
+
+pagesCnt = 1
+
+if aListCnt != 0:
+    pagesCnt = int(driver.find_element(By.CSS_SELECTOR, '#c201_goods > div > a:nth-last-child(2)').text)
+
+for a in range(pagesCnt):
+    print(f'페이지 : {pageCnt}, 페이지 수 : {pagesCnt}, a : {a}')
     time.sleep(2)
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
@@ -49,7 +57,7 @@ for a in pages:
             originPrice = int(originPrice[originPrice.find('price')+9:originPrice.find('price')+18].split(",")[0])
 
             # 해당 단어가 없는 경우에만 진행
-            if title.find('세트') == -1 and title.find('SET') == -1:
+            if title.find('세트') == -1 and title.find('SET') == -1 and title.find('컬렉션') == -1:
 
                 # 제목 정제 => [블라블라] 제거하기
                 title = title.split(']')
@@ -70,7 +78,8 @@ for a in pages:
                 titleNum = 0
                 for i in title:
                     if i.find('NEW') != -1 or i.find('택') != -1 or i.find('공식') != -1 or \
-                            i.find('단독') != -1 or i.find('종') != -1 or i.find('증정') != -1 or i.find(f'{m}') != -1:
+                            i.find('단독') != -1 or i.find('종') != -1 or i.find('증정') != -1 or \
+                            i.find(f'{m}') != -1:
                         del title[titleNum]
                     titleNum = titleNum + 1
                 title = " ".join(title) # 배열 다시 합치기(요소 사이에 띄어쓰기)
@@ -138,23 +147,17 @@ for a in pages:
                         'perfumeName' : title,
                         'price' : int(standardPrice),
                         'likeCnt' : 0,
-                        'reviewCnt' : 0
+                        'reviewCnt' : 0,
                     }
                     result.append(row)
                     print(row)
         forCnt += 1
         print('스크래핑!')
 
-    # page css 셀렉터 값 구하기
-    # 2페이지 다음 번에는 4번째 버튼 눌러야함.(전 페이지 버튼 때문에)
-    if page == 2:
-        page += 1
-    page += 1
-
     # 마지막에는 버튼 누르지 않게
-    if page <= len(pages) + 1:
-        print(f'{page}번째 버튼')
-        driver.find_element(By.CSS_SELECTOR, f'#c201_goods > div > a:nth-child({page})').click()
+    if pageCnt != pagesCnt:
+        driver.find_element(By.CSS_SELECTOR, '#c201_goods > div > a.srchPaginationNext').click()
+        print('다음 쪽 버튼')
 
     pageCnt += 1
 
@@ -166,6 +169,4 @@ df.to_csv('./perfumeBasic.cvs', index=False)
 
 driver.quit()
 
-#c201_goods > ul > li:nth-child(1)
-#c201_goods > ul > li:nth-child(1) > div > a > div > div:nth-child(1) > div.srchProductUnitTitle > strong
 # https://for-it-study.tistory.com/38 ===> img 다운

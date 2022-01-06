@@ -60,8 +60,20 @@ module.exports = class Perfume extends Sequelize.Model {
                     type: Sequelize.FLOAT,
                     allowNull: true,
                 },
-                seasonCnt: {
-                    type: Sequelize.TEXT,
+                seasonSpring: {
+                    type: Sequelize.INTEGER,
+                    allowNull: true,
+                },
+                seasonSummer: {
+                    type: Sequelize.INTEGER,
+                    allowNull: true,
+                },
+                seasonFall: {
+                    type: Sequelize.INTEGER,
+                    allowNull: true,
+                },
+                seasonWinter: {
+                    type: Sequelize.INTEGER,
                     allowNull: true,
                 },
             },
