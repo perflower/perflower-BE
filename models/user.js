@@ -78,7 +78,6 @@ module.exports = class User extends Sequelize.Model {
             foreignKey: "userId",
             sourceKey: "userId",
         });
-
         // db.Review.belongToMany(db.User, { through: "perfumeLike" });
         // db.User.belongToMany(db.Review, { through: "reviewLike" });
     }
