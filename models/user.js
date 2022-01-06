@@ -16,24 +16,24 @@ module.exports = class User extends Sequelize.Model {
                     defaultValue: 0,
                 },
                 userEmail: {
-                    type: Sequelize.STRING(45),
+                    type: Sequelize.STRING,
                     allowNull: false,
                     unique: true,
                 },
                 userPassword: {
-                    type: Sequelize.STRING(100),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
                 userNickname: {
-                    type: Sequelize.STRING(45),
+                    type: Sequelize.STRING,
                     allowNull: false,
                 },
                 userImgUrl: {
-                    type: Sequelize.STRING(500),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
                 userFrag: {
-                    type: Sequelize.STRING(45),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
                 followingCnt: {
@@ -82,20 +82,34 @@ module.exports = class User extends Sequelize.Model {
         db.User.hasMany(db.Review, {
             foreignKey: "userId",
             sourceKey: "userId",
+            constraints: false,
         });
-        // db.User.belongsToMany(db.Perfume, { through: "perfumeLikes" });
-        // db.User.belongsToMany(db.Review, { through: "reviewLikes" });
-    }
-    static associate(db) {
-        db.User.belongsToMany(db.User, {
-            foreignKey: "followingId",
-            as: "Followers",
-            through: "Follow",
+        db.User.hasMany(db.PerfumeLike, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+            constraints: false,
         });
-        db.User.belongsToMany(db.User, {
+        db.User.hasMany(db.ReviewLike, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+            constraints: false,
+        });
+        db.User.hasMany(db.UserFragrance, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+            constraints: false,
+        });
+        db.User.hasMany(db.Follow, {
             foreignKey: "followerId",
-            as: "Followings",
-            through: "Follow",
+            sourceKey: "userId",
+            as: "Follower",
+            constraints: false,
+        });
+        db.User.hasMany(db.Follow, {
+            foreignKey: "followingId",
+            sourceKey: "userId",
+            as: "Following",
+            constraints: false,
         });
     }
 };

@@ -1,25 +1,21 @@
 const Sequelize = require("sequelize");
 
-module.exports = class Fragrance extends Sequelize.Model {
+module.exports = class Follow extends Sequelize.Model {
     static init(sequelize) {
         return super.init(
             {
-                fragId: {
+                followId: {
                     type: Sequelize.INTEGER,
                     allowNull: false,
                     primaryKey: true,
                     autoIncrement: true,
                 },
-                fragName: {
-                    type: Sequelize.STRING,
+                followerId: {
+                    type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                fragImgUrl: {
-                    type: Sequelize.STRING,
-                    allowNull: true,
-                },
-                fragDescription: {
-                    type: Sequelize.TEXT,
+                followingId: {
+                    type: Sequelize.INTEGER,
                     allowNull: true,
                 },
             },
@@ -27,18 +23,27 @@ module.exports = class Fragrance extends Sequelize.Model {
                 sequelize,
                 timestamps: false,
                 underscored: false,
-                modelName: "Fragrance",
-                tableName: "fragrances",
+                modelName: "Follow",
+                tableName: "follows",
                 paranoid: false,
                 charset: "utf8mb4",
                 collate: "utf8mb4_general_ci",
             }
         );
     }
+
     static associate(db) {
-        db.Fragrance.hasMany(db.Perfume, {
-            foreignKey: "fragId",
-            sourceKey: "fragId",
+        db.Follow.belongsTo(db.User, {
+            foreignKey: "followerId",
+            targetKey: "userId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
+        });
+        db.Follow.belongsTo(db.User, {
+            foreignKey: "followingId",
+            targetKey: "userId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
         });
     }
 };

@@ -11,7 +11,7 @@ module.exports = class Review extends Sequelize.Model {
                     autoIncrement: true,
                 },
                 content: {
-                    type: Sequelize.STRING(200),
+                    type: Sequelize.STRING,
                     allowNull: false,
                 },
                 reviewLikeCnt: {
@@ -87,23 +87,22 @@ module.exports = class Review extends Sequelize.Model {
         );
     }
     static associate(db) {
+        db.Review.hasMany(db.ReviewLike, {
+            foreignKey: "reviewId",
+            sourceKey: "reviewId",
+            constraints: false,
+        });
         db.Review.belongsTo(db.Perfume, {
             foreignKey: "perfumeId",
             targetKey: "perfumeId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
-    }
-    static associate(db) {
         db.Review.belongsTo(db.User, {
             foreignKey: "userId",
             targetKey: "userId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
-        });
-        db.Review.belongsToMany(db.User, {
-            through: "reviewLike",
-            as: "Liker",
         });
     }
 };
