@@ -7,6 +7,7 @@ const review = require("./review");
 const fragranceCategory = require("./fragranceCategory");
 
 router.use("/", user);
-router.use("/", perfume, review, fragranceCategory);
+router.use("/review", review);
+router.use("/", perfume, fragranceCategory);
 
 module.exports = router;

@@ -36,7 +36,7 @@ module.exports = class User extends Sequelize.Model {
                     allowNull: false,
                     defaultValue: 0,
                 },
-                follwerCnt: {
+                followerCnt: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     allowNull: false,
                     defaultValue: 0,
@@ -73,5 +73,13 @@ module.exports = class User extends Sequelize.Model {
             }
         );
     }
-    static associate(db) {}
+    static associate(db) {
+        db.User.hasMany(db.Review, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+        });
+
+        // db.Review.belongToMany(db.User, { through: "perfumeLike" });
+        // db.User.belongToMany(db.Review, { through: "reviewLike" });
+    }
 };
