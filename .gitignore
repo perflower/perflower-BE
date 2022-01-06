@@ -1,5 +1,5 @@
 .env
-*.config.json
+*.json
 
 # misc
 .DS_Store
