@@ -3,5 +3,5 @@ dotenv.config();
 
 module.exports = {
     port: process.env.PORT,
-    secretKey: process.env.secretKey,
+    secretKey: process.env.SECRET_KEY,
 };
