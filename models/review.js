@@ -10,7 +10,6 @@ module.exports = class Review extends Sequelize.Model {
                     primaryKey: true,
                     autoIncrement: true,
                 },
-
                 content: {
                     type: Sequelize.STRING(200),
                     allowNull: false,
