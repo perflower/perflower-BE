@@ -10,6 +10,7 @@ module.exports = class Review extends Sequelize.Model {
                     primaryKey: true,
                     autoIncrement: true,
                 },
+
                 content: {
                     type: Sequelize.STRING(200),
                     allowNull: false,
@@ -44,9 +45,21 @@ module.exports = class Review extends Sequelize.Model {
                     allowNull: false,
                     defaultValue: 0,
                 },
-                season: {
-                    type: Sequelize.STRING,
-                    allowNull: false,
+                seasonSpring: {
+                    type: Sequelize.BOOLEAN,
+                    allowNull: true,
+                },
+                seasonSummer: {
+                    type: Sequelize.BOOLEAN,
+                    allowNull: true,
+                },
+                seasonFall: {
+                    type: Sequelize.BOOLEAN,
+                    allowNull: true,
+                },
+                seasonWinter: {
+                    type: Sequelize.BOOLEAN,
+                    allowNull: true,
                 },
                 createdAt: {
                     type: Sequelize.DATE,
