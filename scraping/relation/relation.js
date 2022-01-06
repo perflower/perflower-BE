@@ -1,5 +1,6 @@
 const express = require("express");
 const { Perfume } = require("../../models");
+const { Brand } = require("../../models");
 const byBrandFilePath = "./perfumesByBrand.cvs";
 const byConcentFilePath = "./perfumesByConcent.cvs";
 const byFragFilePath = "./perfumesByFrag.cvs";
@@ -33,8 +34,28 @@ async function getPerfumes() {
     await getPerfumesByFrag;
 }
 
-getPerfumes().then(() => {
-    console.log(perfumesByBrand);
+getPerfumes().then(async () => {
+    brandArr = [];
+    num = 0;
+    perfumesByBrand.forEach(async (a) => {
+        let i = "";
+        let brand = "";
+        brand = await Brand.findOne({
+            where: {
+                brandName: a.brandName,
+            },
+        });
+        num = num + 1;
+        const brandId = brand.dataValues.brandId;
+        console.log("x번째 향수 : ", num);
+        console.log("brandId : ", brandId);
+        a.brandId = brandId;
+        brandArr.push(a);
+        if (num == perfumesByBrand.length) {
+            console.log(brandArr);
+        }
+    });
+    console.log(brandArr);
 });
 
-module.exports = { getPerfumes };
+// module.exports = { getPerfumes };
