@@ -40,6 +40,10 @@ module.exports = class Perfume extends Sequelize.Model {
                     allowNull: false,
                     defaultValue: 0,
                 },
+                originImgUrl: {
+                    type: Sequelize.STRING(200),
+                    allowNull: false,
+                },
                 starRatingAvg: {
                     type: Sequelize.FLOAT,
                     allowNull: true,
