@@ -1,8 +1,8 @@
 const express = require("express");
 const { Perfume } = require("../../models");
-const byBrandFilePath = "./relation/perfumesByBrand.cvs";
-const byConcentFilePath = "./relation/perfumesByConcent.cvs";
-const byFragFilePath = "./relation/perfumesByFrag.cvs";
+const byBrandFilePath = "./perfumesByBrand.cvs";
+const byConcentFilePath = "./perfumesByConcent.cvs";
+const byFragFilePath = "./perfumesByFrag.cvs";
 const csv = require("csvtojson");
 
 let perfumesByBrand = [],
@@ -33,6 +33,8 @@ async function getPerfumes() {
     await getPerfumesByFrag;
 }
 
-getPerfumes();
+getPerfumes().then(() => {
+    console.log(perfumesByBrand);
+});
 
 module.exports = { getPerfumes };
