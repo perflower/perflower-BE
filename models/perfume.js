@@ -48,7 +48,7 @@ module.exports = class Perfume extends Sequelize.Model {
                     type: Sequelize.FLOAT,
                     allowNull: true,
                 },
-                indexSecualAvg: {
+                indexSexualAvg: {
                     type: Sequelize.FLOAT,
                     allowNull: true,
                 },
@@ -64,19 +64,19 @@ module.exports = class Perfume extends Sequelize.Model {
                     type: Sequelize.FLOAT,
                     allowNull: true,
                 },
-                seasonSpring: {
+                seasonSpringCnt: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                seasonSummer: {
+                seasonSummerCnt: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                seasonFall: {
+                seasonFallCnt: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                seasonWinter: {
+                seasonWinterCnt: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
                 },
@@ -106,9 +106,9 @@ module.exports = class Perfume extends Sequelize.Model {
             constraints: false,
         });
 
-        db.Perfume.hasMany(db.UserFragrance, {
-            foreignKey: "fragId",
-            sourceKey: "fragId",
+        db.Perfume.hasMany(db.PerfumeWishList, {
+            foreignKey: "perfumeId",
+            sourceKey: "perfumeId",
             constraints: false,
         });
 

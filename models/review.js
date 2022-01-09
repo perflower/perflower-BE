@@ -10,6 +10,14 @@ module.exports = class Review extends Sequelize.Model {
                     primaryKey: true,
                     autoIncrement: true,
                 },
+                userId: {
+                    type: Sequelize.INTEGER,
+                    allowNull: false,
+                },
+                perfumeId: {
+                    type: Sequelize.INTEGER,
+                    allowNull: false,
+                },
                 content: {
                     type: Sequelize.STRING,
                     allowNull: false,
@@ -21,27 +29,27 @@ module.exports = class Review extends Sequelize.Model {
                 },
                 starRating: {
                     type: Sequelize.FLOAT.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 0,
                 },
                 indexSexual: {
                     type: Sequelize.INTEGER.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 5,
                 },
                 indexTone: {
                     type: Sequelize.INTEGER.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 5,
                 },
                 indexBody: {
                     type: Sequelize.INTEGER.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 5,
                 },
                 indexDesign: {
                     type: Sequelize.INTEGER.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 0,
                 },
                 seasonSpring: {
