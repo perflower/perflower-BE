@@ -38,7 +38,7 @@ module.exports = class UserFragrance extends Sequelize.Model {
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
-        db.UserFragrance.belongsTo(db.Perfume, {
+        db.UserFragrance.belongsTo(db.Fragrance, {
             foreignKey: "fragId",
             targetKey: "fragId",
             onUpdate: "CASCADE",

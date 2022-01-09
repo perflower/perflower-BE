@@ -9,6 +9,7 @@ const PerfumeLike = require("./perfumeLike");
 const ReviewLike = require("./reviewLike");
 const UserFragrance = require("./userFragrance");
 const Follow = require("./follow");
+const PerfumeWishList = require("./perfumeWishList");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../config/config")[env];
 
@@ -32,6 +33,7 @@ db.PerfumeLike = PerfumeLike;
 db.ReviewLike = ReviewLike;
 db.UserFragrance = UserFragrance;
 db.Follow = Follow;
+db.PerfumeWishList = PerfumeWishList;
 
 User.init(sequelize);
 Review.init(sequelize);
@@ -43,6 +45,7 @@ PerfumeLike.init(sequelize);
 ReviewLike.init(sequelize);
 UserFragrance.init(sequelize);
 Follow.init(sequelize);
+PerfumeWishList.init(sequelize);
 
 User.associate(db);
 Review.associate(db);
@@ -54,6 +57,7 @@ PerfumeLike.associate(db);
 ReviewLike.associate(db);
 UserFragrance.associate(db);
 Follow.associate(db);
+PerfumeWishList.associate(db);
 
 db.sequelize = sequelize;
 

@@ -3,8 +3,8 @@ const router = express.Router();
 const authmiddleware = require("../middlewares/auth-middleware");
 const {
     reviewPost,
-    reviewGetThree,
-    reviewGetAll,
+    reviewGetThreeByLatest,
+    reviewGetAllByLatest,
     reviewUpdate,
     reviewDelete,
     reviewLike,
@@ -15,11 +15,11 @@ const {
 //리뷰등록
 router.route("/:perfumeId").post(reviewPost);
 
-//향수페이지 리뷰 3개 조회
-router.route("/:perfumeId/three").get(reviewGetThree);
+//향수페이지 리뷰 3개 조회 (최신순)
+router.route("/:perfumeId/three").get(reviewGetThreeByLatest);
 
-//상세리뷰페이지 리뷰 전체조회
-router.route("/:perfumeId/all").get(reviewGetAll);
+//상세리뷰페이지 리뷰 전체조회(최신순)
+router.route("/:perfumeId/all").get(reviewGetAllByLatest);
 
 router.route("/:reviewId").put(reviewUpdate).delete(reviewDelete);
 router.route("/:reviewId/like").post(reviewLike).delete(reviewLikeDelete);

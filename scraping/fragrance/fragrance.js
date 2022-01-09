@@ -9,6 +9,7 @@ const fragrance = csv()
         jsonObj.forEach((a) => {
             Fragrance.create({
                 fragName: a.fragName,
+                fragDescription: a.fragDescription,
             });
         });
     });
