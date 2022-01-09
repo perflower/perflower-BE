@@ -32,14 +32,14 @@ module.exports = class PerfumeWishList extends Sequelize.Model {
         );
     }
     static associate(db) {
-        db.PerfumeLike.belongsTo(db.Perfume, {
+        db.PerfumeWishList.belongsTo(db.Perfume, {
             foreignKey: "perfumeId",
             targetKey: "perfumeId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
 
-        db.PerfumeLike.belongsTo(db.User, {
+        db.PerfumeWishList.belongsTo(db.User, {
             foreignKey: "userId",
             targetKey: "userId",
             onUpdate: "CASCADE",

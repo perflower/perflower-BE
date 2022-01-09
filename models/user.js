@@ -89,6 +89,12 @@ module.exports = class User extends Sequelize.Model {
             sourceKey: "userId",
             constraints: false,
         });
+
+        db.User.hasMany(db.PerfumeWishList, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+            constraints: false,
+        });
         db.User.hasMany(db.ReviewLike, {
             foreignKey: "userId",
             sourceKey: "userId",
