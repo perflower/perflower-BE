@@ -10,6 +10,10 @@ module.exports = class ReviewLike extends Sequelize.Model {
                     primaryKey: true,
                     autoIncrement: true,
                 },
+                perfumeId: {
+                    type: Sequelize.INTEGER,
+                    allowNull: true,
+                },
                 reviewId: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
@@ -32,6 +36,13 @@ module.exports = class ReviewLike extends Sequelize.Model {
         );
     }
     static associate(db) {
+        db.ReviewLike.belongsTo(db.Perfume, {
+            foreignKey: "perfumeId",
+            targetKey: "perfumeId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
+        });
+
         db.ReviewLike.belongsTo(db.Review, {
             foreignKey: "reviewId",
             targetKey: "reviewId",
