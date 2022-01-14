@@ -50,9 +50,12 @@ async function getPerfumes() {
 
 //<코드 작성 중 의문점>
 //쿼리를 실행한 후에 왜 forEach에서 벗어나질 못하는 걸까?
+//-> find 쿼리는 Promise라 그렇다는 것 같다.
 //그것 때문에 뎁스가 너무 깊어졌다...
 //-> forEach 대신 for문을 한 번 써서 나중에 시도해보자..
+//-> 아니면 find 쿼리 다음에 .then을 붙여서 해결할 수 있나?
 //이유도 알아보자
+//https://bubobubo003.tistory.com/47 참고
 
 //카테고리별 향수 배열 생성하기
 getPerfumes().then(async () => {
@@ -61,6 +64,7 @@ getPerfumes().then(async () => {
     let fragArr = [];
     let num = 0;
 
+    //============브랜드별 향수 작업 시작==========
     //브랜드별 향수 배열 순회
     perfumesByBrand.forEach(async (a) => {
         //브랜드별 향수의 브랜드와 DB내 brand table의 브랜드를 비교한다.
@@ -101,11 +105,11 @@ getPerfumes().then(async () => {
                 num = num + 1;
                 console.log("x번째 향수 : ", num);
 
-                //=======마지막 배열 순회 시=========
+                //--------마지막 배열 순회 시---------
                 if (num == brandArr.length) {
                     num = 0;
 
-                    //------------농도별 향수 작업 시작-------------
+                    //==============농도별 향수 작업 시작===============
                     perfumesByConcent.forEach(async (a) => {
                         const concent = await Concentration.findOne({
                             where: {
@@ -129,11 +133,11 @@ getPerfumes().then(async () => {
                                 num = num + 1;
                                 console.log("x번째 향수 : ", num);
 
-                                //=======마지막 배열 순회 시=======
+                                //---------마지막 배열 순회 시---------
                                 if (num == concentArr.length) {
                                     num = 0;
 
-                                    //------------향별 향수 작업 시작------------
+                                    //=============향별 향수 작업 시작=============
                                     perfumesByFrag.forEach(async (a) => {
                                         const frag = await Fragrance.findOne({
                                             where: {
@@ -164,7 +168,7 @@ getPerfumes().then(async () => {
                                                     "x번째 향수 : ",
                                                     num
                                                 );
-                                                //=======마지막 배열 순회 시=======
+                                                //----------마지막 배열 순회 시----------
                                                 if (num == fragArr.length) {
                                                     //concentrationId가 존재하지 않는 향수는 제거
                                                     await Perfume.destroy({

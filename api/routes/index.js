@@ -14,8 +14,8 @@ router.use("/review", review);
 router.use("/auth", auth);
 
 router.use("/user", user);
-router.use("/", perfume, fragranceCategory);
+router.use("/perfume", perfume);
+router.use("/", fragranceCategory);
 router.use("/userTest", userTest);
 router.use("/community", community);
-
 module.exports = router;

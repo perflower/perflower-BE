@@ -10,12 +10,13 @@ module.exports = class PerfumeLike extends Sequelize.Model {
                     primaryKey: true,
                     autoIncrement: true,
                 },
-                perfumeId: {
-                    type: Sequelize.INTEGER,
-                    allowNull: true,
+                createdAt: {
+                    type: Sequelize.DATE,
+                    allowNull: false,
+                    defaultValue: Sequelize.literal("now()"),
                 },
-                userId: {
-                    type: Sequelize.INTEGER,
+                updatedAt: {
+                    type: Sequelize.DATE,
                     allowNull: true,
                 },
             },

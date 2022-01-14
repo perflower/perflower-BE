@@ -83,31 +83,37 @@ module.exports = class User extends Sequelize.Model {
         );
     }
     static associate(db) {
-        db.User.hasMany(db.Review, {
-            foreignKey: "userId",
-            sourceKey: "userId",
-            constraints: false,
-        });
+        //향수 좋아요 N:M -> 1:N, N:1
         db.User.hasMany(db.PerfumeLike, {
             foreignKey: "userId",
             sourceKey: "userId",
             constraints: false,
         });
+      
+        db.User.hasMany(db.Review, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+            constraints: false,
+        });
+      
         db.User.hasMany(db.ReviewLike, {
             foreignKey: "userId",
             sourceKey: "userId",
             constraints: false,
         });
+      
         db.User.hasMany(db.UserTest, {
             foreignKey: "userId",
             sourceKey: "userId",
             constraints: false,
         });
+      
         db.User.belongsToMany(db.User, {
           foreignKey: 'followingId',
           as: 'Followers',
           through: 'Follow',
         });
+      
         db.User.belongsToMany(db.User, {
             foreignKey: 'followerId',
             as: 'Followings',

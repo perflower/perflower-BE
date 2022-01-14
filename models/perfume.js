@@ -40,6 +40,10 @@ module.exports = class Perfume extends Sequelize.Model {
                     allowNull: false,
                     defaultValue: 0,
                 },
+                imgUrl: {
+                    type: Sequelize.STRING(200),
+                    allowNull: false,
+                },
                 originImgUrl: {
                     type: Sequelize.STRING,
                     allowNull: false,
@@ -94,6 +98,13 @@ module.exports = class Perfume extends Sequelize.Model {
         );
     }
     static associate(db) {
+        //향수 좋아요 N:M -> 1:N, N:1
+        db.Perfume.hasMany(db.PerfumeLike, {
+            foreignKey: "perfumeId",
+            sourceKey: "perfumeId",
+            constraints: false,
+        });
+      
         db.Perfume.hasMany(db.Review, {
             foreignKey: "perfumeId",
             sourceKey: "perfumeId",
@@ -105,32 +116,28 @@ module.exports = class Perfume extends Sequelize.Model {
             sourceKey: "perfumeId",
             constraints: false,
         });
-
-        db.Perfume.hasMany(db.PerfumeLike, {
-            foreignKey: "perfumeId",
-            sourceKey: "perfumeId",
-            constraints: false,
-        });
-
+      
+        //향 카테고리 1:N
         db.Perfume.belongsTo(db.Fragrance, {
             foreignKey: "fragId",
             targetKey: "fragId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
-
+      
+        //농도 카테고리 1:N
         db.Perfume.belongsTo(db.Concentration, {
             foreignKey: "concentrationId",
             targetKey: "concentrationId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
-
+      
+        //브랜드 카테고리 1:N
         db.Perfume.belongsTo(db.Brand, {
             foreignKey: "brandId",
             targetKey: "brandId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
-        });
     }
 };
