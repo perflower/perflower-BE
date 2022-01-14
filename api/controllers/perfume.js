@@ -9,9 +9,25 @@ const {
 } = require("../../models");
 const { Op } = require("sequelize");
 
+const findLikeList = () => {};
+
 //전체 향수 목록 제공
 const getPerfumes = async (req, res) => {
+  const userId = res.locals.users.userId;
+
   try {
+    //향수에 좋아요 누른 게 있는지 찾기
+    const checkList = await PerfumeLike.findAll({
+      where: {
+        userId: userId,
+      },
+    });
+    //좋아요 누른 향수의 향수ID 찾기
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.perfumeId));
+
+    //모든 향수 조회
+    //sol2. attributes 내부에 exclude => 제외할 항목만 선정 가능
     const perfumes = await Perfume.findAll({
       attributes: [
         "perfumeId",
@@ -20,12 +36,21 @@ const getPerfumes = async (req, res) => {
         "concentrationId",
         "perfumeName",
         "price",
+        "likeBoolean",
         "likeCnt",
         "reviewCnt",
         "imgUrl",
       ],
       order: [["likeCnt", "DESC"]],
     });
+
+    //유저가 좋아요 누른 향수에는 true값 넣어주기
+    perfumes.forEach((a) => {
+      if (arr.includes(a.perfumeId)) {
+        a.likeBoolean = true;
+      }
+    });
+
     res.status(200).send({
       result: true,
       list: perfumes,
@@ -227,7 +252,6 @@ const getPerfumeDetail = async (req, res) => {
 const perfumeLike = async (req, res) => {
   const { perfumeId } = req.params;
   const userId = res.locals.users.userId;
-  console.log(perfumeId);
 
   try {
     //대상 향수 찾기
@@ -247,6 +271,21 @@ const perfumeLike = async (req, res) => {
           perfumeId: perfumeId,
         });
         //향수 DB의 좋아요 개수 최신화
+        const perfumes = await PerfumeLike.findAll({
+          where: {
+            perfumeId: perfumeId,
+          },
+        });
+        await Perfume.update(
+          {
+            likeCnt: perfumes.length,
+          },
+          {
+            where: {
+              perfumeId: perfumeId,
+            },
+          }
+        );
 
         return res.status(200).json({
           result: true,
@@ -264,6 +303,23 @@ const perfumeLike = async (req, res) => {
             ],
           },
         });
+
+        //향수 DB의 좋아요 개수 최신화
+        const perfumes = await PerfumeLike.findAll({
+          where: {
+            perfumeId: perfumeId,
+          },
+        });
+        await Perfume.update(
+          {
+            likeCnt: perfumes.length,
+          },
+          {
+            where: {
+              perfumeId: perfumeId,
+            },
+          }
+        );
 
         return res.status(200).json({
           result: true,
