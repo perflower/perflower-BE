@@ -1,25 +1,21 @@
 const Sequelize = require("sequelize");
 
-module.exports = class Fragrance extends Sequelize.Model {
+module.exports = class PerfumeWishList extends Sequelize.Model {
     static init(sequelize) {
         return super.init(
             {
-                fragId: {
+                perfumeWishListId: {
                     type: Sequelize.INTEGER,
                     allowNull: false,
                     primaryKey: true,
                     autoIncrement: true,
                 },
-                fragName: {
-                    type: Sequelize.STRING,
+                perfumeId: {
+                    type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                fragImgUrl: {
-                    type: Sequelize.STRING,
-                    allowNull: true,
-                },
-                fragDescription: {
-                    type: Sequelize.TEXT,
+                userId: {
+                    type: Sequelize.INTEGER,
                     allowNull: true,
                 },
             },
@@ -27,8 +23,8 @@ module.exports = class Fragrance extends Sequelize.Model {
                 sequelize,
                 timestamps: false,
                 underscored: false,
-                modelName: "Fragrance",
-                tableName: "fragrances",
+                modelName: "PerfumeWishList",
+                tableName: "perfumeWishLists",
                 paranoid: false,
                 charset: "utf8mb4",
                 collate: "utf8mb4_general_ci",
@@ -36,16 +32,18 @@ module.exports = class Fragrance extends Sequelize.Model {
         );
     }
     static associate(db) {
-        db.Fragrance.hasMany(db.Perfume, {
-            foreignKey: "fragId",
-            sourceKey: "fragId",
-            constraints: false,
+        db.PerfumeWishList.belongsTo(db.Perfume, {
+            foreignKey: "perfumeId",
+            targetKey: "perfumeId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
         });
 
-        db.Fragrance.hasMany(db.UserFragrance, {
-            foreignKey: "fragId",
-            sourceKey: "fragId",
-            constraints: false,
+        db.PerfumeWishList.belongsTo(db.User, {
+            foreignKey: "userId",
+            targetKey: "userId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
         });
     }
 };
