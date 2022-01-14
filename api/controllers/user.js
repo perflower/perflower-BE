@@ -175,6 +175,7 @@ const getUser = async (req, res) => {
         userReviewCnt: user.userReviewCnt,
         userImgUrl: user.userImgUrl,
         userFrag: user.userFrag,
+        description: user.description,
 
     });
   } catch (err) {
