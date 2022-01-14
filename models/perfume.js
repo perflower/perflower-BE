@@ -104,7 +104,7 @@ module.exports = class Perfume extends Sequelize.Model {
             sourceKey: "perfumeId",
             constraints: false,
         });
-      
+
         db.Perfume.hasMany(db.Review, {
             foreignKey: "perfumeId",
             sourceKey: "perfumeId",
@@ -116,7 +116,7 @@ module.exports = class Perfume extends Sequelize.Model {
             sourceKey: "perfumeId",
             constraints: false,
         });
-      
+
         //향 카테고리 1:N
         db.Perfume.belongsTo(db.Fragrance, {
             foreignKey: "fragId",
@@ -124,7 +124,7 @@ module.exports = class Perfume extends Sequelize.Model {
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
-      
+
         //농도 카테고리 1:N
         db.Perfume.belongsTo(db.Concentration, {
             foreignKey: "concentrationId",
@@ -132,12 +132,13 @@ module.exports = class Perfume extends Sequelize.Model {
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
-      
+
         //브랜드 카테고리 1:N
         db.Perfume.belongsTo(db.Brand, {
             foreignKey: "brandId",
             targetKey: "brandId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
+        });
     }
 };
