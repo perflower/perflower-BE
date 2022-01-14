@@ -23,7 +23,7 @@ module.exports = class Perfume extends Sequelize.Model {
                     allowNull: true,
                 },
                 perfumeName: {
-                    type: Sequelize.STRING(200),
+                    type: Sequelize.STRING,
                     allowNull: false,
                 },
                 price: {
@@ -32,7 +32,7 @@ module.exports = class Perfume extends Sequelize.Model {
                 },
                 likeCnt: {
                     type: Sequelize.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 0,
                 },
                 reviewCnt: {
@@ -45,14 +45,14 @@ module.exports = class Perfume extends Sequelize.Model {
                     allowNull: false,
                 },
                 originImgUrl: {
-                    type: Sequelize.STRING(200),
+                    type: Sequelize.STRING,
                     allowNull: false,
                 },
                 starRatingAvg: {
                     type: Sequelize.FLOAT,
                     allowNull: true,
                 },
-                indexSecualAvg: {
+                indexSexualAvg: {
                     type: Sequelize.FLOAT,
                     allowNull: true,
                 },
@@ -68,19 +68,19 @@ module.exports = class Perfume extends Sequelize.Model {
                     type: Sequelize.FLOAT,
                     allowNull: true,
                 },
-                seasonSpring: {
+                seasonSpringCnt: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                seasonSummer: {
+                seasonSummerCnt: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                seasonFall: {
+                seasonFallCnt: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
                 },
-                seasonWinter: {
+                seasonWinterCnt: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
                 },
@@ -92,31 +92,52 @@ module.exports = class Perfume extends Sequelize.Model {
                 modelName: "Perfume",
                 tableName: "perfumes",
                 paranoid: false,
-                charset: "utf8",
-                collate: "utf8_general_ci",
+                charset: "utf8mb4",
+                collate: "utf8mb4_general_ci",
             }
         );
     }
     static associate(db) {
-        //향 카테고리 1:N
-        db.Perfume.belongsTo(db.Fragrance, {
-            foreignKey: "fragId",
-            targetKey: "fragId",
-        });
-        //브랜드 카테고리 1:N
-        db.Perfume.belongsTo(db.Brand, {
-            foreignKey: "brandId",
-            targetKey: "brandId",
-        });
-        //농도 카테고리 1:N
-        db.Perfume.belongsTo(db.Concentration, {
-            foreignKey: "concentrationId",
-            targetKey: "concentrationId",
-        });
         //향수 좋아요 N:M -> 1:N, N:1
         db.Perfume.hasMany(db.PerfumeLike, {
             foreignKey: "perfumeId",
             sourceKey: "perfumeId",
+            constraints: false,
         });
+      
+        db.Perfume.hasMany(db.Review, {
+            foreignKey: "perfumeId",
+            sourceKey: "perfumeId",
+            constraints: false,
+        });
+
+        db.Perfume.hasMany(db.ReviewLike, {
+            foreignKey: "perfumeId",
+            sourceKey: "perfumeId",
+            constraints: false,
+        });
+      
+        //향 카테고리 1:N
+        db.Perfume.belongsTo(db.Fragrance, {
+            foreignKey: "fragId",
+            targetKey: "fragId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
+        });
+      
+        //농도 카테고리 1:N
+        db.Perfume.belongsTo(db.Concentration, {
+            foreignKey: "concentrationId",
+            targetKey: "concentrationId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
+        });
+      
+        //브랜드 카테고리 1:N
+        db.Perfume.belongsTo(db.Brand, {
+            foreignKey: "brandId",
+            targetKey: "brandId",
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
     }
 };

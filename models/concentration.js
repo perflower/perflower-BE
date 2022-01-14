@@ -11,7 +11,7 @@ module.exports = class Concentration extends Sequelize.Model {
                     autoIncrement: true,
                 },
                 concentrationName: {
-                    type: Sequelize.STRING(100),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
             },
@@ -22,8 +22,8 @@ module.exports = class Concentration extends Sequelize.Model {
                 modelName: "Concentration",
                 tableName: "concentrations",
                 paranoid: false,
-                charset: "utf8",
-                collate: "utf8_general_ci",
+                charset: "utf8mb4",
+                collate: "utf8mb4_general_ci",
             }
         );
     }

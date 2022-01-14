@@ -10,8 +10,16 @@ module.exports = class Review extends Sequelize.Model {
                     primaryKey: true,
                     autoIncrement: true,
                 },
+                userId: {
+                    type: Sequelize.INTEGER,
+                    allowNull: false,
+                },
+                perfumeId: {
+                    type: Sequelize.INTEGER,
+                    allowNull: false,
+                },
                 content: {
-                    type: Sequelize.STRING(200),
+                    type: Sequelize.STRING,
                     allowNull: false,
                 },
                 reviewLikeCnt: {
@@ -21,44 +29,48 @@ module.exports = class Review extends Sequelize.Model {
                 },
                 starRating: {
                     type: Sequelize.FLOAT.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 0,
                 },
                 indexSexual: {
                     type: Sequelize.INTEGER.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 5,
                 },
                 indexTone: {
                     type: Sequelize.INTEGER.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 5,
                 },
                 indexBody: {
                     type: Sequelize.INTEGER.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 5,
                 },
                 indexDesign: {
                     type: Sequelize.INTEGER.UNSIGNED,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 0,
                 },
                 seasonSpring: {
                     type: Sequelize.BOOLEAN,
                     allowNull: true,
+                    defaultValue: 0,
                 },
                 seasonSummer: {
                     type: Sequelize.BOOLEAN,
                     allowNull: true,
+                    defaultValue: 0,
                 },
                 seasonFall: {
                     type: Sequelize.BOOLEAN,
                     allowNull: true,
+                    defaultValue: 0,
                 },
                 seasonWinter: {
                     type: Sequelize.BOOLEAN,
                     allowNull: true,
+                    defaultValue: 0,
                 },
                 createdAt: {
                     type: Sequelize.DATE,
@@ -83,23 +95,22 @@ module.exports = class Review extends Sequelize.Model {
         );
     }
     static associate(db) {
+        db.Review.hasMany(db.ReviewLike, {
+            foreignKey: "reviewId",
+            sourceKey: "reviewId",
+            constraints: false,
+        });
         db.Review.belongsTo(db.Perfume, {
             foreignKey: "perfumeId",
             targetKey: "perfumeId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
-    }
-    static associate(db) {
         db.Review.belongsTo(db.User, {
             foreignKey: "userId",
             targetKey: "userId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
-        });
-        db.Review.belongsToMany(db.User, {
-            through: "reviewLikes",
-            as: "Liker",
         });
     }
 };

@@ -1,22 +1,21 @@
 const Sequelize = require("sequelize");
 
-module.exports = class PerfumeLike extends Sequelize.Model {
+module.exports = class Follow extends Sequelize.Model {
     static init(sequelize) {
         return super.init(
             {
-                perfumeLikeId: {
+                followId: {
                     type: Sequelize.INTEGER,
                     allowNull: false,
                     primaryKey: true,
                     autoIncrement: true,
                 },
-                createdAt: {
-                    type: Sequelize.DATE,
-                    allowNull: false,
-                    defaultValue: Sequelize.literal("now()"),
+                followerId: {
+                    type: Sequelize.INTEGER,
+                    allowNull: true,
                 },
-                updatedAt: {
-                    type: Sequelize.DATE,
+                followingId: {
+                    type: Sequelize.INTEGER,
                     allowNull: true,
                 },
             },
@@ -24,24 +23,24 @@ module.exports = class PerfumeLike extends Sequelize.Model {
                 sequelize,
                 timestamps: false,
                 underscored: false,
-                modelName: "PerfumeLike",
-                tableName: "perfumeLikes",
+                modelName: "Follow",
+                tableName: "follows",
                 paranoid: false,
                 charset: "utf8mb4",
                 collate: "utf8mb4_general_ci",
             }
         );
     }
+
     static associate(db) {
-        db.PerfumeLike.belongsTo(db.Perfume, {
-            foreignKey: "perfumeId",
-            targetKey: "perfumeId",
+        db.Follow.belongsTo(db.User, {
+            foreignKey: "followerId",
+            targetKey: "userId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         });
-
-        db.PerfumeLike.belongsTo(db.User, {
-            foreignKey: "userId",
+        db.Follow.belongsTo(db.User, {
+            foreignKey: "followingId",
             targetKey: "userId",
             onUpdate: "CASCADE",
             onDelete: "CASCADE",

@@ -1,6 +1,5 @@
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
-
 const axios = require("axios");
 
 const { User } = require('../../models');
@@ -9,16 +8,14 @@ module.exports = () => {
   passport.use(
     new KakaoStrategy(
       {
-        clientID: process.env.KAKAO_ID,
-        callbackURL: '/api/auth/kakao/callback',
+        clientID: process.env.KAKAO_ID2,
+        callbackURL: '/api/user/kakao/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         
         try {
           const res = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers: { Authorization: `Bearer ${accessToken}`, },
           });
           
           const exUser = await User.findOne({

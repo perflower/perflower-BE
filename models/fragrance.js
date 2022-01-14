@@ -11,11 +11,15 @@ module.exports = class Fragrance extends Sequelize.Model {
                     autoIncrement: true,
                 },
                 fragName: {
-                    type: Sequelize.STRING(100),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
                 fragImgUrl: {
-                    type: Sequelize.STRING(200),
+                    type: Sequelize.STRING,
+                    allowNull: true,
+                },
+                fragDescription: {
+                    type: Sequelize.TEXT,
                     allowNull: true,
                 },
             },
@@ -26,8 +30,8 @@ module.exports = class Fragrance extends Sequelize.Model {
                 modelName: "Fragrance",
                 tableName: "fragrances",
                 paranoid: false,
-                charset: "utf8",
-                collate: "utf8_general_ci",
+                charset: "utf8mb4",
+                collate: "utf8mb4_general_ci",
             }
         );
     }
@@ -35,6 +39,7 @@ module.exports = class Fragrance extends Sequelize.Model {
         db.Fragrance.hasMany(db.Perfume, {
             foreignKey: "fragId",
             sourceKey: "fragId",
+            constraints: false,
         });
     }
 };

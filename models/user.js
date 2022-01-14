@@ -16,24 +16,24 @@ module.exports = class User extends Sequelize.Model {
                     defaultValue: 0,
                 },
                 userEmail: {
-                    type: Sequelize.STRING(45),
+                    type: Sequelize.STRING,
                     allowNull: false,
                     unique: true,
                 },
                 userPassword: {
-                    type: Sequelize.STRING(100),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
                 userNickname: {
-                    type: Sequelize.STRING(45),
+                    type: Sequelize.STRING,
                     allowNull: false,
                 },
                 userImgUrl: {
-                    type: Sequelize.STRING(500),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
                 userFrag: {
-                    type: Sequelize.STRING(45),
+                    type: Sequelize.STRING,
                     allowNull: true,
                 },
                 followingCnt: {
@@ -56,6 +56,10 @@ module.exports = class User extends Sequelize.Model {
                     allowNull: false,
                     defaultValue: 0,
                 },
+                description: {
+                    type: Sequelize.TEXT,
+                    allowNull: true,
+                },
                 createdAt: {
                     type: Sequelize.DATE,
                     allowNull: false,
@@ -73,26 +77,47 @@ module.exports = class User extends Sequelize.Model {
                 modelName: "User",
                 tableName: "users",
                 paranoid: false,
-                charset: "utf8",
-                collate: "utf8_general_ci",
+                charset: "utf8mb4",
+                collate: "utf8mb4_general_ci",
             }
         );
     }
     static associate(db) {
-        db.User.belongsToMany(db.User, {
-            foreignKey: "followingId",
-            as: "Followers",
-            through: "Follow",
-        });
-        db.User.belongsToMany(db.User, {
-            foreignKey: "followerId",
-            as: "Followings",
-            through: "Follow",
-        });
         //향수 좋아요 N:M -> 1:N, N:1
         db.User.hasMany(db.PerfumeLike, {
             foreignKey: "userId",
             sourceKey: "userId",
+            constraints: false,
         });
+      
+        db.User.hasMany(db.Review, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+            constraints: false,
+        });
+      
+        db.User.hasMany(db.ReviewLike, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+            constraints: false,
+        });
+      
+        db.User.hasMany(db.UserTest, {
+            foreignKey: "userId",
+            sourceKey: "userId",
+            constraints: false,
+        });
+      
+        db.User.belongsToMany(db.User, {
+          foreignKey: 'followingId',
+          as: 'Followers',
+          through: 'Follow',
+        });
+      
+        db.User.belongsToMany(db.User, {
+            foreignKey: 'followerId',
+            as: 'Followings',
+            through: 'Follow',
+          });
     }
 };
