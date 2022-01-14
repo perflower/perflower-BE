@@ -4,7 +4,6 @@ const {
   Brand,
   Fragrance,
   Concentration,
-  User,
   PerfumeLike,
 } = require("../../models");
 const { Op } = require("sequelize");
@@ -14,7 +13,8 @@ const findLikeList = () => {};
 //전체 향수 목록 제공
 const getPerfumes = async (req, res) => {
   const userId = res.locals.users.userId;
-
+  const { orderType } = req.query;
+  let perfumes;
   try {
     //향수에 좋아요 누른 게 있는지 찾기
     const checkList = await PerfumeLike.findAll({
@@ -27,22 +27,43 @@ const getPerfumes = async (req, res) => {
     checkList.forEach((a) => arr.push(a.perfumeId));
 
     //모든 향수 조회
-    //sol2. attributes 내부에 exclude => 제외할 항목만 선정 가능
-    const perfumes = await Perfume.findAll({
-      attributes: [
-        "perfumeId",
-        "fragId",
-        "brandId",
-        "concentrationId",
-        "perfumeName",
-        "price",
-        "likeBoolean",
-        "likeCnt",
-        "reviewCnt",
-        "imgUrl",
-      ],
-      order: [["likeCnt", "DESC"]],
-    });
+    //sol2. attributes 내부에 exclude 사용 => 제외할 항목만 선정 가능
+
+    //좋아요순 정렬
+    if (orderType == "like") {
+      perfumes = await Perfume.findAll({
+        attributes: [
+          "perfumeId",
+          "fragId",
+          "brandId",
+          "concentrationId",
+          "perfumeName",
+          "price",
+          "likeBoolean",
+          "likeCnt",
+          "reviewCnt",
+          "imgUrl",
+        ],
+        order: [["likeCnt", "DESC"]],
+      });
+    } //별점순 정렬
+    else if (orderType == "star") {
+      perfumes = await Perfume.findAll({
+        attributes: [
+          "perfumeId",
+          "fragId",
+          "brandId",
+          "concentrationId",
+          "perfumeName",
+          "price",
+          "likeBoolean",
+          "likeCnt",
+          "reviewCnt",
+          "imgUrl",
+        ],
+        order: [["starRatingAvg", "DESC"]],
+      });
+    }
 
     //유저가 좋아요 누른 향수에는 true값 넣어주기
     perfumes.forEach((a) => {
@@ -97,25 +118,69 @@ const getFilters = async (req, res) => {
 
 //브랜드 필터링된 향수 목록 제공
 const getBrandPerfumes = async (req, res) => {
+  const userId = res.locals.users.userId;
+  const { brandId } = req.params;
+  const { orderType } = req.query;
+  let perfumes;
   try {
-    const { brandId } = req.params;
-
-    const perfumes = await Perfume.findAll({
+    //향수에 좋아요 누른 게 있는지 찾기
+    const checkList = await PerfumeLike.findAll({
       where: {
-        brandId: brandId,
+        userId: userId,
       },
-      attributes: [
-        "perfumeId",
-        "fragId",
-        "brandId",
-        "concentrationId",
-        "perfumeName",
-        "price",
-        "likeCnt",
-        "reviewCnt",
-        "imgUrl",
-      ],
     });
+    //좋아요 누른 향수의 향수ID 찾기
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.perfumeId));
+
+    //모든 향수 조회
+    //sol2. attributes 내부에 exclude 사용 => 제외할 항목만 선정 가능
+
+    //좋아요순 정렬
+    if (orderType == "like") {
+      perfumes = await Perfume.findAll({
+        where: { brandId: brandId },
+        attributes: [
+          "perfumeId",
+          "fragId",
+          "brandId",
+          "concentrationId",
+          "perfumeName",
+          "price",
+          "likeBoolean",
+          "likeCnt",
+          "reviewCnt",
+          "imgUrl",
+        ],
+        order: [["likeCnt", "DESC"]],
+      });
+    } //별점순 정렬
+    else if (orderType == "star") {
+      perfumes = await Perfume.findAll({
+        where: { brandId: brandId },
+        attributes: [
+          "perfumeId",
+          "fragId",
+          "brandId",
+          "concentrationId",
+          "perfumeName",
+          "price",
+          "likeBoolean",
+          "likeCnt",
+          "reviewCnt",
+          "imgUrl",
+        ],
+        order: [["starRatingAvg", "DESC"]],
+      });
+    }
+
+    //유저가 좋아요 누른 향수에는 true값 넣어주기
+    perfumes.forEach((a) => {
+      if (arr.includes(a.perfumeId)) {
+        a.likeBoolean = true;
+      }
+    });
+
     res.status(200).send({
       result: true,
       list: perfumes,
@@ -129,25 +194,69 @@ const getBrandPerfumes = async (req, res) => {
 
 //향 필터링된 향수 목록 제공
 const getFragPerfumes = async (req, res) => {
+  const userId = res.locals.users.userId;
+  const { fragId } = req.params;
+  const { orderType } = req.query;
+  let perfumes;
   try {
-    const { fragId } = req.params;
-
-    const perfumes = await Perfume.findAll({
+    //향수에 좋아요 누른 게 있는지 찾기
+    const checkList = await PerfumeLike.findAll({
       where: {
-        fragId: fragId,
+        userId: userId,
       },
-      attributes: [
-        "perfumeId",
-        "fragId",
-        "brandId",
-        "concentrationId",
-        "perfumeName",
-        "price",
-        "likeCnt",
-        "reviewCnt",
-        "imgUrl",
-      ],
     });
+    //좋아요 누른 향수의 향수ID 찾기
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.perfumeId));
+
+    //모든 향수 조회
+    //sol2. attributes 내부에 exclude 사용 => 제외할 항목만 선정 가능
+
+    //좋아요순 정렬
+    if (orderType == "like") {
+      perfumes = await Perfume.findAll({
+        where: { fragId: fragId },
+        attributes: [
+          "perfumeId",
+          "fragId",
+          "brandId",
+          "concentrationId",
+          "perfumeName",
+          "price",
+          "likeBoolean",
+          "likeCnt",
+          "reviewCnt",
+          "imgUrl",
+        ],
+        order: [["likeCnt", "DESC"]],
+      });
+    } //별점순 정렬
+    else if (orderType == "star") {
+      perfumes = await Perfume.findAll({
+        where: { fragId: fragId },
+        attributes: [
+          "perfumeId",
+          "fragId",
+          "brandId",
+          "concentrationId",
+          "perfumeName",
+          "price",
+          "likeBoolean",
+          "likeCnt",
+          "reviewCnt",
+          "imgUrl",
+        ],
+        order: [["starRatingAvg", "DESC"]],
+      });
+    }
+
+    //유저가 좋아요 누른 향수에는 true값 넣어주기
+    perfumes.forEach((a) => {
+      if (arr.includes(a.perfumeId)) {
+        a.likeBoolean = true;
+      }
+    });
+
     res.status(200).send({
       result: true,
       list: perfumes,
@@ -161,25 +270,70 @@ const getFragPerfumes = async (req, res) => {
 
 //농도 필터링된 향수 목록 제공
 const getConcentPerfumes = async (req, res) => {
-  try {
-    const { concentrationId } = req.params;
+  const userId = res.locals.users.userId;
+  const { concentrationId } = req.params;
+  const { orderType } = req.query;
+  let perfumes;
 
-    const perfumes = await Perfume.findAll({
+  try {
+    //향수에 좋아요 누른 게 있는지 찾기
+    const checkList = await PerfumeLike.findAll({
       where: {
-        concentrationId: concentrationId,
+        userId: userId,
       },
-      attributes: [
-        "perfumeId",
-        "fragId",
-        "brandId",
-        "concentrationId",
-        "perfumeName",
-        "price",
-        "likeCnt",
-        "reviewCnt",
-        "imgUrl",
-      ],
     });
+    //좋아요 누른 향수의 향수ID 찾기
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.perfumeId));
+
+    //모든 향수 조회
+    //sol2. attributes 내부에 exclude 사용 => 제외할 항목만 선정 가능
+
+    //좋아요순 정렬
+    if (orderType == "like") {
+      perfumes = await Perfume.findAll({
+        where: { concentrationId: concentrationId },
+        attributes: [
+          "perfumeId",
+          "fragId",
+          "brandId",
+          "concentrationId",
+          "perfumeName",
+          "price",
+          "likeBoolean",
+          "likeCnt",
+          "reviewCnt",
+          "imgUrl",
+        ],
+        order: [["likeCnt", "DESC"]],
+      });
+    } //별점순 정렬
+    else if (orderType == "star") {
+      perfumes = await Perfume.findAll({
+        where: { concentrationId: concentrationId },
+        attributes: [
+          "perfumeId",
+          "fragId",
+          "brandId",
+          "concentrationId",
+          "perfumeName",
+          "price",
+          "likeBoolean",
+          "likeCnt",
+          "reviewCnt",
+          "imgUrl",
+        ],
+        order: [["starRatingAvg", "DESC"]],
+      });
+    }
+
+    //유저가 좋아요 누른 향수에는 true값 넣어주기
+    perfumes.forEach((a) => {
+      if (arr.includes(a.perfumeId)) {
+        a.likeBoolean = true;
+      }
+    });
+
     res.status(200).send({
       result: true,
       list: perfumes,
@@ -213,6 +367,7 @@ const getPricePerfumes = async (req, res) => {
         "concentrationId",
         "perfumeName",
         "price",
+        "likeBoolean",
         "likeCnt",
         "reviewCnt",
         "imgUrl",
