@@ -56,6 +56,10 @@ module.exports = class User extends Sequelize.Model {
                     allowNull: false,
                     defaultValue: 0,
                 },
+                description: {
+                    type: Sequelize.TEXT,
+                    allowNull: true,
+                },
                 createdAt: {
                     type: Sequelize.DATE,
                     allowNull: false,
@@ -99,17 +103,15 @@ module.exports = class User extends Sequelize.Model {
             sourceKey: "userId",
             constraints: false,
         });
-        db.User.hasMany(db.Follow, {
-            foreignKey: "followerId",
-            sourceKey: "userId",
-            as: "Follower",
-            constraints: false,
+        db.User.belongsToMany(db.User, {
+          foreignKey: 'followingId',
+          as: 'Followers',
+          through: 'Follow',
         });
-        db.User.hasMany(db.Follow, {
-            foreignKey: "followingId",
-            sourceKey: "userId",
-            as: "Following",
-            constraints: false,
-        });
+        db.User.belongsToMany(db.User, {
+            foreignKey: 'followerId',
+            as: 'Followings',
+            through: 'Follow',
+          });
     }
 };
