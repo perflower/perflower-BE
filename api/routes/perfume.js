@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const authmiddleware = require("../middlewares/auth-middleware");
 const {
-    getPerfumes,
-    getFilters,
-    getBrandPerfumes,
-    getFragPerfumes,
-    getConcentPerfumes,
-    getPricePerfumes,
-    getPerfumeDetail,
-    perfumeLike,
+  getPerfumes,
+  getFilters,
+  getBrandPerfumes,
+  getFragPerfumes,
+  getConcentPerfumes,
+  getPricePerfumes,
+  getPerfumeDetail,
+  perfumeLike,
 } = require("../controllers/perfume");
 
 //전체 향수 목록 출력

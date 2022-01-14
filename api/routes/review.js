@@ -2,17 +2,17 @@ const express = require("express");
 const router = express.Router();
 const authmiddleware = require("../middlewares/auth-middleware");
 const {
-    reviewPost,
-    reviewGet,
-    reviewGetThreeByLatest,
-    reviewGetThreeByPopular,
-    reviewGetAllByLatest,
-    reviewGetAllByPopular,
-    reviewUpdate,
-    reviewDelete,
-    reviewLike,
-    reviewLikeDelete,
-    test,
+  reviewPost,
+  reviewGet,
+  reviewGetThreeByLatest,
+  reviewGetThreeByPopular,
+  reviewGetAllByLatest,
+  reviewGetAllByPopular,
+  reviewUpdate,
+  reviewDelete,
+  reviewLike,
+  reviewLikeDelete,
+  test,
 } = require("../controllers/review");
 
 //리뷰등록
@@ -31,9 +31,9 @@ router.route("/:perfumeId/all/byLatest").get(reviewGetAllByLatest);
 router.route("/:perfumeId/all/byPopular").get(reviewGetAllByPopular);
 //리뷰 좋아요 및 취소
 router
-    .route("/:perfumeId/:reviewId/like")
-    .post(reviewLike)
-    .delete(reviewLikeDelete);
+  .route("/:perfumeId/:reviewId/like")
+  .post(reviewLike)
+  .delete(reviewLikeDelete);
 //유저의 리뷰라이크정보전달
 
 //테스트

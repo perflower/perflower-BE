@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const authmiddleware = require("../middlewares/auth-middleware");
 const {
-    communityPerfume,
-    communityReview,
+  communityPerfume,
+  communityReview,
 } = require("../controllers/community");
 
 router.route("/hot").get(communityPerfume);

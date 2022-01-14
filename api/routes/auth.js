@@ -6,8 +6,6 @@
 // const jwt = require("jsonwebtoken");
 // const router = express.Router();
 
-
-
 // router.get('/kakao/logout', (req, res) => {
 //   req.logout();
 //   req.session.destroy();
@@ -24,12 +22,12 @@
 //   (req, res) => {
 //     try {
 //       console.log("여기서 테스트 한번 합시다.");
-      
+
 //       const user = req.user;
 //       const token = jwt.sign(
 //         { userId: user.userId }, process.env.SECRET_KEY);
 //       const data = { user: user };
-      
+
 //       res.status(200).send({
 //         message: "로그인에 성공하였습니다.",
 //         data: data,

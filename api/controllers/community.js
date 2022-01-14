@@ -8,6 +8,6 @@ communityPerfume = async (req, res) => {};
 communityReview = async (req, res) => {};
 
 module.exports = {
-    communityPerfume,
-    communityReview,
+  communityPerfume,
+  communityReview,
 };

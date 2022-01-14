@@ -14,36 +14,36 @@ dotenv.config();
 const passportConfig = require("./api/passport");
 
 const corsOptions = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Request-Method": "POST, GET, DELETE, PATCH, PUT",
-    "Access-Control-Request-Headers": "X-Custom-Header",
-    credentials: true,
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Request-Method": "POST, GET, DELETE, PATCH, PUT",
+  "Access-Control-Request-Headers": "X-Custom-Header",
+  credentials: true,
 };
 app.use(cors());
 
 sequelize
-    .sync({ force: false })
-    .then(() => {
-        console.log("데이터베이스 연결 성공");
-    })
-    .catch((err) => {
-        console.error(err);
-    });
+  .sync({ force: false })
+  .then(() => {
+    console.log("데이터베이스 연결 성공");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 passportConfig(); // 패스포트 설정
 
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
-    session({
-        resave: false,
-        saveUninitialized: false,
-        secret: process.env.COOKIE_SECRET,
-        cookie: {
-            httpOnly: true,
-            secure: false,
-        },
-    })
+  session({
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    },
+  })
 );
 app.use(passport.initialize());
 app.use(passport.session());
@@ -64,10 +64,10 @@ app.use("/api", index);
 //     res.render("error");
 // });
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/views/image.html');
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/views/image.html");
 });
 
 app.listen(config.port, () => {
-    console.log(`listening at http://localhost:${config.port}`);
+  console.log(`listening at http://localhost:${config.port}`);
 });

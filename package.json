@@ -17,7 +17,7 @@
     },
     "homepage": "https://github.com/PurfumePlanet-Backend/Backend#readme",
     "dependencies": {
-        "aws-sdk": "^2.1054.0",
+        "aws-sdk": "^2.1057.0",
         "axios": "^0.24.0",
         "bcrypt": "^5.0.1",
         "cors": "^2.8.5",
