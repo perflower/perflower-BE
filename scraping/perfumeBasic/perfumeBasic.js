@@ -26,6 +26,7 @@ const perfumeBasic = csv()
                 price: a.price,
                 likeCnt: a.likeCnt,
                 reviewCnt: a.reviewCnt,
+                imgUrl: a.imgUrl,
                 originImgUrl: a.originImgUrl,
             });
         });

@@ -31,5 +31,10 @@ module.exports = class Fragrance extends Sequelize.Model {
             }
         );
     }
-    static associate(db) {}
+    static associate(db) {
+        db.Fragrance.hasMany(db.Perfume, {
+            foreignKey: "fragId",
+            sourceKey: "fragId",
+        });
+    }
 };

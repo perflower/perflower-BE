@@ -40,6 +40,10 @@ module.exports = class Perfume extends Sequelize.Model {
                     allowNull: false,
                     defaultValue: 0,
                 },
+                imgUrl: {
+                    type: Sequelize.STRING(200),
+                    allowNull: false,
+                },
                 originImgUrl: {
                     type: Sequelize.STRING(200),
                     allowNull: false,
@@ -93,5 +97,14 @@ module.exports = class Perfume extends Sequelize.Model {
             }
         );
     }
-    static associate(db) {}
+    static associate(db) {
+        db.Perfume.belongsTo(db.Fragrance, {
+            foreignKey: "fragId",
+            targetKey: "fragId",
+        });
+        db.Perfume.belongsToMany(db.User, {
+            through: "PerfumeLike",
+            foreignKey: "perfumeId",
+        });
+    }
 };
