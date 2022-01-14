@@ -5,6 +5,9 @@ const { Op } = require("sequelize");
 communityPerfume = async (req, res) => {};
 
 //커뮤니티 실시간 리뷰달린 향수
-communityRevie = async (req, res) => {};
+communityReview = async (req, res) => {};
 
-module.exports = {};
+module.exports = {
+    communityPerfume,
+    communityReview,
+};

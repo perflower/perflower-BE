@@ -10,6 +10,7 @@ const fragrance = csv()
             Fragrance.create({
                 fragName: a.fragName,
                 fragDescription: a.fragDescription,
+                fragImgUrl: a.fragImgUrl,
             });
         });
     });

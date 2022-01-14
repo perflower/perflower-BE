@@ -41,11 +41,5 @@ module.exports = class Fragrance extends Sequelize.Model {
             sourceKey: "fragId",
             constraints: false,
         });
-
-        db.Fragrance.hasMany(db.UserFragrance, {
-            foreignKey: "fragId",
-            sourceKey: "fragId",
-            constraints: false,
-        });
     }
 };

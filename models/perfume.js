@@ -32,7 +32,7 @@ module.exports = class Perfume extends Sequelize.Model {
                 },
                 likeCnt: {
                     type: Sequelize.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
                     defaultValue: 0,
                 },
                 reviewCnt: {
@@ -100,13 +100,13 @@ module.exports = class Perfume extends Sequelize.Model {
             constraints: false,
         });
 
-        db.Perfume.hasMany(db.PerfumeLike, {
+        db.Perfume.hasMany(db.ReviewLike, {
             foreignKey: "perfumeId",
             sourceKey: "perfumeId",
             constraints: false,
         });
 
-        db.Perfume.hasMany(db.PerfumeWishList, {
+        db.Perfume.hasMany(db.PerfumeLike, {
             foreignKey: "perfumeId",
             sourceKey: "perfumeId",
             constraints: false,
