@@ -1,23 +1,27 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");
 const authorization = require("../middlewares/auth-middleware");
+const upload = require('../middlewares/upload');
+const passport = require('passport');
+
+
 const {
     userLogin,
     userRegister,
-    kakaoLogin,
     userFollow,
     getUser,
     reviewPerfume,
     likePerfume,
     updateUser,
+    deleteUser,
+    profileUpload,
+    getFollowingList,
+    getFollowerList,
+    kakaoCallback,
+    kakaoLogout,
+
+
 } = require("../controllers/user");
-
-// const passportLogin = require("../controllers/")
-// // const { emailCheck, login, sigup , nickNameCheck } = require('../controller/user')
-
-// // const isuser = require("../middlewares/doMiddlewares");
-// // const upload = require("../utils/s3");
 
 // 로그인
 router.post("/login", userLogin);
@@ -26,22 +30,43 @@ router.post("/login", userLogin);
 router.post("/register", userRegister);
 
 // 카카오 로그인
-// router.get("/kakao", kakaoLogin);
+router.get('/kakao', passport.authenticate('kakao'));
 
-// 유저 프로필 페이지
-router.get("/:userId", authorization, getUser);
+// 카카오 콜백
+router.get("/kakao/callback", passport.authenticate("kakao", {failureRedirect: "/",}, ),kakaoCallback);
 
-// // 팔로우 기능
-router.post("/follow/:userId", authorization, userFollow);
+// 카카오 로그아웃
+router.get('/kakao/logout',kakaoLogout);
+
+// 유저 프로필 조회
+router.get("/:userId",authorization, getUser);
+
+// 유저 프로필 변경
+router.put("/:userId",authorization, updateUser);
+
+// 유저 삭제
+router.delete("/:userId",authorization, deleteUser);
+
+// 팔로잉 리스트
+router.get("/following/:userId",authorization, getFollowingList);
+
+// 팔로워 리스트
+router.get("/follower/:userId",authorization, getFollowerList);
+
+// 팔로워 팔로잉하기/취소하기  
+router.post("/follow/:userId",authorization, userFollow);
 
 // 내가 리뷰 작성한 향수 리스트
-router.get("/review/:userId", reviewPerfume);
+router.get("/review/:userId",authorization, reviewPerfume);
 
 // 내가 찜한(좋아요) 향수 리스트
-router.get("/like/:userId", likePerfume);
+router.get("/like/:userId",authorization, likePerfume);
 
-// // 유저 프로필 변경 페이지
-// router.put("/:userId", updateUser);
+// 프로필 업로드
+router.post("/:userId", upload.single('img'), profileUpload);
 
-//
+
+
+
+
 module.exports = router;
