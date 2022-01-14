@@ -27,5 +27,10 @@ module.exports = class Concentration extends Sequelize.Model {
             }
         );
     }
-    static associate(db) {}
+    static associate(db) {
+        db.Concentration.hasMany(db.Perfume, {
+            foreignKey: "concentrationId",
+            sourceKey: "concentrationId",
+        });
+    }
 };

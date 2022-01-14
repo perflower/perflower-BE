@@ -89,9 +89,10 @@ module.exports = class User extends Sequelize.Model {
             as: "Followings",
             through: "Follow",
         });
-        db.User.belongsToMany(db.Perfume, {
-            through: "PerfumeLike",
+        //향수 좋아요 N:M -> 1:N, N:1
+        db.User.hasMany(db.PerfumeLike, {
             foreignKey: "userId",
+            sourceKey: "userId",
         });
     }
 };

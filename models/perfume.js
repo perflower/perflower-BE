@@ -98,13 +98,25 @@ module.exports = class Perfume extends Sequelize.Model {
         );
     }
     static associate(db) {
+        //향 카테고리 1:N
         db.Perfume.belongsTo(db.Fragrance, {
             foreignKey: "fragId",
             targetKey: "fragId",
         });
-        db.Perfume.belongsToMany(db.User, {
-            through: "PerfumeLike",
+        //브랜드 카테고리 1:N
+        db.Perfume.belongsTo(db.Brand, {
+            foreignKey: "brandId",
+            targetKey: "brandId",
+        });
+        //농도 카테고리 1:N
+        db.Perfume.belongsTo(db.Concentration, {
+            foreignKey: "concentrationId",
+            targetKey: "concentrationId",
+        });
+        //향수 좋아요 N:M -> 1:N, N:1
+        db.Perfume.hasMany(db.PerfumeLike, {
             foreignKey: "perfumeId",
+            sourceKey: "perfumeId",
         });
     }
 };

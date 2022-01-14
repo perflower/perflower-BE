@@ -4,11 +4,12 @@ const {
     Brand,
     Fragrance,
     Concentration,
+    User,
     PerfumeLike,
 } = require("../../models");
 const { Op } = require("sequelize");
 
-// 전체 향수 목록 제공
+//전체 향수 목록 제공
 const getPerfumes = async (req, res) => {
     try {
         const perfumes = await Perfume.findAll({
@@ -213,7 +214,7 @@ const getPerfumeDetail = async (req, res) => {
         });
         res.status(200).send({
             result: true,
-            constent: perfume,
+            content: perfume,
         });
     } catch {
         res.status(400).send({
@@ -225,28 +226,51 @@ const getPerfumeDetail = async (req, res) => {
 //향수 좋아요 & 좋아요 취소
 const perfumeLike = async (req, res) => {
     const { perfumeId } = req.params;
-    const userId = res.locals.users;
+    const userId = res.locals.users.userId;
+    console.log(perfumeId);
 
     try {
-        const likeList = await PerfumeLike.findOne({ perfumeId });
-        // const check = perfume.likePerson.filter((id) => id === userId);
-        console.log(likeList);
-        res.status(200).json({
-            result: true,
-            list: likeList,
+        //대상 향수 찾기
+        const perfume = await Perfume.findOne({
+            where: { perfumeId: perfumeId },
         });
+        //대상 향수에 좋아요 누른 게 있는지 찾기
+        const checkList = await PerfumeLike.findAll({
+            where: { [Op.and]: [{ userId: userId }, { perfumeId: perfumeId }] },
+        });
+        //대상 향수가 있을 경우
+        if (perfume) {
+            //만약 좋아요 누른 게 없으면 좋아요
+            if (checkList.length < 1) {
+                await PerfumeLike.create({
+                    userId: userId,
+                    perfumeId: perfumeId,
+                });
+                //향수 DB의 좋아요 개수 최신화
 
-        // if (check[0]) {
-        //     const change = perfume.likePerson.filter((id) => id !== userId);
-        //     perfume.likePerson = change;
-        //     perfume.likeCnt = perfume.likePerson.length;
-        //     await perfume.save();
-        //     return res.send("좋아요 취소");
-        // }
-        // perfume.likePerson.push(userId);
-        // perfume.likeCnt = perfume.likePerson.length;
-        // await post.save();
-        // return res.send("좋아요 추가");
+                return res.status(200).json({
+                    result: true,
+                    message: "좋아요",
+                });
+            } //좋아요 누른 게 있으면 좋아요 취소
+            else {
+                await PerfumeLike.destroy({
+                    where: {
+                        [Op.and]: [
+                            {
+                                perfumeId: perfumeId,
+                            },
+                            { userId: userId },
+                        ],
+                    },
+                });
+
+                return res.status(200).json({
+                    result: true,
+                    message: "좋아요 취소",
+                });
+            }
+        }
     } catch {
         res.status(400).send({
             errorMessage: "좋아요 오류 발생",
