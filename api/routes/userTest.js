@@ -14,6 +14,7 @@ const {
 } = require("../controllers/userTest");
 
 //유저취향테스트 선택문항 받아서 update
+
 router.route("/1/:userSelect").get(authorization, userTest1);
 router.route("/2/:userSelect").get(authorization, userTest2);
 router.route("/3/:userSelect").get(authorization, userTest3);
@@ -23,4 +24,5 @@ router.route("/6/:userSelect").get(authorization, userTest6);
 router.route("/7/:userSelect").get(authorization, userTest7);
 router.route("/8/:userSelect").get(authorization, userTest8);
 router.route("/9/:userSelect").get(authorization, userTestResult);
+
 module.exports = router;

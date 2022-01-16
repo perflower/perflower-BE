@@ -2,14 +2,6 @@ const multer = require("multer");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const path = require("path");
-const fs = require("fs");
-
-try {
-  fs.readdirSync("uploads");
-} catch (error) {
-  console.error("uploads 폴더가 없어 uploads 폴더를 생성합니다.");
-  fs.mkdirSync("uploads");
-}
 
 AWS.config.update({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,

@@ -15,8 +15,10 @@ const { Op } = require("sequelize");
 */
 
 userTest1 = async (req, res) => {
+
   const { userSelect } = req.params;
   const userId = res.locals.users.userId;
+
   try {
     console.log("들옴");
     await UserTest.findOrCreate({
