@@ -30,6 +30,11 @@ module.exports = class Perfume extends Sequelize.Model {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
+        likeBoolean: {
+          type: Sequelize.BOOLEAN,
+          allowNull: true,
+          defaultValue: false,
+        },
         likeCnt: {
           type: Sequelize.INTEGER,
           allowNull: true,
@@ -41,7 +46,7 @@ module.exports = class Perfume extends Sequelize.Model {
           defaultValue: 0,
         },
         imgUrl: {
-          type: Sequelize.STRING(200),
+          type: Sequelize.TEXT,
           allowNull: false,
         },
         originImgUrl: {
