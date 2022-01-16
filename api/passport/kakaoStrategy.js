@@ -8,8 +8,8 @@ module.exports = () => {
   passport.use(
     new KakaoStrategy(
       {
-        clientID: process.env.KAKAO_ID2,
-        callbackURL: "/api/user/kakao/callback",
+        clientID: process.env.KAKAO_ID,
+        callbackURL: "https://perflower.com/api/user/kakao/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         try {

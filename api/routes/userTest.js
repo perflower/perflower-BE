@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const authmiddleware = require("../middlewares/auth-middleware");
+const authorization = require("../middlewares/auth-middleware");
 const {
   userTest1,
   userTest2,
@@ -14,7 +14,7 @@ const {
 } = require("../controllers/userTest");
 
 //유저취향테스트 선택문항 받아서 update
-router.route("/1").get(userTest1);
+router.route("/1").get(authorization, userTest1);
 router.route("/2").get(userTest2);
 router.route("/3").get(userTest3);
 router.route("/4").get(userTest4);

@@ -15,8 +15,8 @@ const { Op } = require("sequelize");
 */
 
 userTest1 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.query;
+  const { userId } = res.locals.users;
   try {
     console.log("들옴");
     await UserTest.findOrCreate({
