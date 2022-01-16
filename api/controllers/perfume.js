@@ -14,7 +14,9 @@ const findLikeList = () => {};
 const getPerfumes = async (req, res) => {
   const userId = res.locals.users.userId;
   const { orderType, scrollNum } = req.query;
-  let perfumes, offsetCnt;
+  let perfumes,
+    offsetCnt,
+    lastPage = false;
   try {
     //향수에 좋아요 누른 게 있는지 찾기
     const checkList = await PerfumeLike.findAll({
@@ -67,9 +69,16 @@ const getPerfumes = async (req, res) => {
       });
     }
 
+    //향수 전체 개수
+    allPerfumeCnt = perfumes.length;
+
     //무한스크롤 시 넘길 향수
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
+
+    if (offsetCnt + 10 >= allPerfumeCnt) {
+      lastPage = true;
+    }
 
     //유저가 좋아요 누른 향수에는 true값 넣어주기
     perfumes.forEach((a) => {
@@ -81,6 +90,7 @@ const getPerfumes = async (req, res) => {
     res.status(200).send({
       result: true,
       list: perfumes,
+      lastPage,
     });
   } catch {
     res.status(400).send({
@@ -127,7 +137,9 @@ const getBrandPerfumes = async (req, res) => {
   const userId = res.locals.users.userId;
   const { brandId } = req.params;
   const { orderType, scrollNum } = req.query;
-  let perfumes, offsetCnt;
+  let perfumes,
+    offsetCnt,
+    lastPage = false;
   try {
     //향수에 좋아요 누른 게 있는지 찾기
     const checkList = await PerfumeLike.findAll({
@@ -180,9 +192,16 @@ const getBrandPerfumes = async (req, res) => {
       });
     }
 
+    //향수 전체 개수
+    allPerfumeCnt = perfumes.length;
+
     //무한스크롤 시 넘길 향수
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
+
+    if (offsetCnt + 10 >= allPerfumeCnt) {
+      lastPage = true;
+    }
 
     //유저가 좋아요 누른 향수에는 true값 넣어주기
     perfumes.forEach((a) => {
@@ -194,6 +213,7 @@ const getBrandPerfumes = async (req, res) => {
     res.status(200).send({
       result: true,
       list: perfumes,
+      lastPage,
     });
   } catch {
     res.status(400).send({
@@ -207,7 +227,9 @@ const getFragPerfumes = async (req, res) => {
   const userId = res.locals.users.userId;
   const { fragId } = req.params;
   const { orderType, scrollNum } = req.query;
-  let perfumes, offsetCnt;
+  let perfumes,
+    offsetCnt,
+    lastPage = false;
   try {
     //향수에 좋아요 누른 게 있는지 찾기
     const checkList = await PerfumeLike.findAll({
@@ -260,9 +282,16 @@ const getFragPerfumes = async (req, res) => {
       });
     }
 
+    //향수 전체 개수
+    allPerfumeCnt = perfumes.length;
+
     //무한스크롤 시 넘길 향수
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
+
+    if (offsetCnt + 10 >= allPerfumeCnt) {
+      lastPage = true;
+    }
 
     //유저가 좋아요 누른 향수에는 true값 넣어주기
     perfumes.forEach((a) => {
@@ -274,6 +303,7 @@ const getFragPerfumes = async (req, res) => {
     res.status(200).send({
       result: true,
       list: perfumes,
+      lastPage,
     });
   } catch {
     res.status(400).send({
@@ -287,7 +317,9 @@ const getConcentPerfumes = async (req, res) => {
   const userId = res.locals.users.userId;
   const { concentrationId } = req.params;
   const { orderType, scrollNum } = req.query;
-  let perfumes, offsetCnt;
+  let perfumes,
+    offsetCnt,
+    lastPage = false;
 
   try {
     //향수에 좋아요 누른 게 있는지 찾기
@@ -341,9 +373,16 @@ const getConcentPerfumes = async (req, res) => {
       });
     }
 
+    //향수 전체 개수
+    allPerfumeCnt = perfumes.length;
+
     //무한스크롤 시 넘길 향수
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
+
+    if (offsetCnt + 10 >= allPerfumeCnt) {
+      lastPage = true;
+    }
 
     //유저가 좋아요 누른 향수에는 true값 넣어주기
     perfumes.forEach((a) => {
@@ -355,6 +394,7 @@ const getConcentPerfumes = async (req, res) => {
     res.status(200).send({
       result: true,
       list: perfumes,
+      lastPage,
     });
   } catch {
     res.status(400).send({
@@ -432,9 +472,16 @@ const getPricePerfumes = async (req, res) => {
       });
     }
 
+    //향수 전체 개수
+    allPerfumeCnt = perfumes.length;
+
     //무한스크롤 시 넘길 향수
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
+
+    if (offsetCnt + 10 >= allPerfumeCnt) {
+      lastPage = true;
+    }
 
     //유저가 좋아요 누른 향수에는 true값 넣어주기
     perfumes.forEach((a) => {
@@ -446,6 +493,7 @@ const getPricePerfumes = async (req, res) => {
     res.status(200).send({
       result: true,
       list: perfumes,
+      lastPage,
     });
   } catch {
     res.status(400).send({
