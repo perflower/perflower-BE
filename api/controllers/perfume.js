@@ -8,8 +8,6 @@ const {
 } = require("../../models");
 const { Op } = require("sequelize");
 
-const findLikeList = () => {};
-
 //전체 향수 목록 제공
 const getPerfumes = async (req, res) => {
   const userId = res.locals.users.userId;
@@ -76,6 +74,7 @@ const getPerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -107,9 +106,7 @@ const getFilters = async (req, res) => {
     console.log(filterNum);
 
     if (filterNum == 0) {
-      filter = await Brand.findAll({
-        attributes: ["brandId", "brandName"],
-      });
+      filter = await Brand.findAll();
     }
     if (filterNum == 1) {
       filter = await Fragrance.findAll({
@@ -117,9 +114,7 @@ const getFilters = async (req, res) => {
       });
     }
     if (filterNum == 2) {
-      filter = await Concentration.findAll({
-        attributes: ["concentrationId", "concentrationName"],
-      });
+      filter = await Concentration.findAll();
     }
     res.status(200).send({
       result: true,
@@ -199,6 +194,7 @@ const getBrandPerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -289,6 +285,7 @@ const getFragPerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -380,6 +377,7 @@ const getConcentPerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -479,6 +477,7 @@ const getPricePerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
