@@ -17,9 +17,8 @@ reviewPost = async (req, res) => {
       seasonSummer,
       seasonFall,
       seasonWinter,
-      userId,
     } = req.body;
-    // const { userId } = res.locals.users;
+    const userId = res.locals.users.userId;
 
     const thisReview = await Review.create({
       perfumeId: perfumeId,
@@ -391,8 +390,8 @@ reviewGetAllByPopular = async (req, res) => {
 reviewUpdate = async (req, res) => {
   try {
     const { reviewId } = req.params;
-    const { content, userId } = req.body;
-    // const userId = res.locals.userId;
+    const { content } = req.body;
+    const userId = res.locals.users.userId;
 
     //본인확인
     const thisReview = await Review.findOne({
@@ -425,8 +424,7 @@ reviewUpdate = async (req, res) => {
 reviewDelete = async (req, res) => {
   try {
     const { reviewId } = req.params;
-    const { userId } = req.body;
-    // const userId = res.locals.userId;
+    const userId = res.locals.users.userId;
 
     //본인확인
     const delReview = await Review.findOne({
@@ -543,8 +541,7 @@ reviewDelete = async (req, res) => {
 reviewLike = async (req, res) => {
   try {
     const { perfumeId, reviewId } = req.params;
-    const { userId } = req.body;
-    // const userId = res.locals.userId;
+    const userId = res.locals.users.userId;
 
     const aacc = await Review.findOne({
       where: {
@@ -609,8 +606,7 @@ reviewLike = async (req, res) => {
 reviewLikeDelete = async (req, res) => {
   try {
     const { perfumeId, reviewId } = req.params;
-    const { userId } = req.body;
-    // const userId = res.locals.userId;
+    const userId = res.locals.users.userId;
 
     const aacc = await Review.findOne({
       where: {
@@ -629,7 +625,6 @@ reviewLikeDelete = async (req, res) => {
       },
       raw: true,
     });
-    console.log(aacc);
     if (!aacc) {
       return res.status(404).json({ result: "존재하지 않는 리뷰입니다." });
     } else if (!bbcc) {
@@ -650,7 +645,6 @@ reviewLikeDelete = async (req, res) => {
           reviewId: reviewId,
         },
       });
-      console.log(thisReviewLikeCnt);
       await Review.update(
         { reviewLikeCnt: thisReviewLikeCnt },
         {

@@ -41,7 +41,7 @@ module.exports = class Perfume extends Sequelize.Model {
           defaultValue: 0,
         },
         imgUrl: {
-          type: Sequelize.STRING(200),
+          type: Sequelize.TEXT,
           allowNull: false,
         },
         originImgUrl: {

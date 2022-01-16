@@ -15,8 +15,8 @@ const { Op } = require("sequelize");
 */
 
 userTest1 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
   try {
     console.log("들옴");
     await UserTest.findOrCreate({
@@ -108,8 +108,8 @@ userTest1 = async (req, res) => {
   }
 };
 userTest2 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
 
   try {
     await UserTest.findOrCreate({
@@ -170,10 +170,12 @@ userTest2 = async (req, res) => {
     let userTestArray = Object.entries(zz);
     await userTestArray.splice(10, 2);
     let sorted = userTestArray.sort((a, b) => b[1] - a[1]);
+    console.log(sorted);
     let first = sorted[0][0];
     let second = sorted[1][0];
     let third = sorted[2][0];
     let com = first + "," + second + "," + third;
+
     let com2 = com.split(",");
     const testResult = await Fragrance.findAll({
       where: { fragId: { [Op.or]: com2 } },
@@ -194,8 +196,8 @@ userTest2 = async (req, res) => {
 };
 
 userTest3 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
   try {
     await UserTest.findOrCreate({
       where: { userId: userId },
@@ -273,8 +275,8 @@ userTest3 = async (req, res) => {
   }
 };
 userTest4 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
   try {
     await UserTest.findOrCreate({
       where: { userId: userId },
@@ -358,8 +360,8 @@ userTest4 = async (req, res) => {
   }
 };
 userTest5 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
   try {
     await UserTest.findOrCreate({
       where: { userId: userId },
@@ -438,8 +440,8 @@ userTest5 = async (req, res) => {
   }
 };
 userTest6 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
   try {
     await UserTest.findOrCreate({
       where: { userId: userId },
@@ -516,8 +518,8 @@ userTest6 = async (req, res) => {
   }
 };
 userTest7 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
   try {
     await UserTest.findOrCreate({
       where: { userId: userId },
@@ -598,8 +600,8 @@ userTest7 = async (req, res) => {
   }
 };
 userTest8 = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
   try {
     await UserTest.findOrCreate({
       where: { userId: userId },
@@ -679,8 +681,8 @@ userTest8 = async (req, res) => {
   }
 };
 userTestResult = async (req, res) => {
-  const { userId, userSelect } = req.body;
-  // const {userId} = res.locals.users
+  const { userSelect } = req.params;
+  const userId = res.locals.users.userId;
   try {
     await UserTest.findOrCreate({
       where: { userId: userId },

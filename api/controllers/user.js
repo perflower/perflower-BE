@@ -55,7 +55,6 @@ const userLogin = async (req, res) => {
 async function userRegister(req, res) {
   try {
     const { userEmail, userPassword, passwordCheck, userNickname } = req.body;
-    console.log(req.body);
 
     // 공백 확인
     if (
