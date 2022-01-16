@@ -103,7 +103,7 @@ async function userRegister(req, res) {
         [Op.or]: [{ userEmail }], // [Op.or]: 조건[{ email }]이 하나라도 맞으면 가져와라 / Op라는 객체는 시퀄라이즈가 지원
       },
     });
-    if (existUsers) {
+    if (existUsers.length) {
       res.status(400).send({
         errorMessage: "이미 가입된 이메일 또는 닉네임이 있습니다.",
       });
