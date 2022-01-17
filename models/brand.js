@@ -14,6 +14,10 @@ module.exports = class Brand extends Sequelize.Model {
           type: Sequelize.STRING,
           allowNull: true,
         },
+        engBrandName: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize,
