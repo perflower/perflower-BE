@@ -7,9 +7,18 @@ const {
   PerfumeLike,
 } = require("../../models");
 const { Op } = require("sequelize");
+const { afterDestroy } = require("../../models/user");
+const { stringify } = require("qs");
 
 //목록 페이지에서 좋아요 개수와 별점을 실시간으로 업데이트 된 사항을 보여줘야 함
 //-> 불러올 때마다 DB에서 최신 data 꺼내가지고 보여줘야 함..
+
+//서버 실행 시 향수 목록 불러오기
+let firstPerfumes = Perfume.findAll({
+  attributes: ["price"],
+}).then((result) => {
+  firstPerfumes = result;
+});
 
 //전체 향수 목록 제공
 const getPerfumes = async (req, res) => {
@@ -49,8 +58,17 @@ const getPerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["likeCnt", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true, //객체의 중첩을 푸는 옵션. 그러나 객체 키가 사용하기 불편해진다. ex) perfume.['Brand.brandName']
       });
-    } //별점순 정렬
+    }
+
+    //별점순 정렬
     else if (orderType == "star") {
       perfumes = await Perfume.findAll({
         attributes: [
@@ -67,8 +85,19 @@ const getPerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["starRatingAvg", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
     }
+
+    perfumes.forEach((a) => {
+      console.log(a["Brand.brandName"]);
+    });
 
     //향수 전체 개수
     allPerfumeCnt = perfumes.length;
@@ -93,6 +122,7 @@ const getPerfumes = async (req, res) => {
       result: true,
       list: perfumes,
       lastPage,
+      perfumesCnt: allPerfumeCnt,
     });
   } catch {
     res.status(400).send({
@@ -168,8 +198,17 @@ const getBrandPerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["likeCnt", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
-    } //별점순 정렬
+    }
+
+    //별점순 정렬
     else if (orderType == "star") {
       perfumes = await Perfume.findAll({
         where: { brandId: brandId },
@@ -187,6 +226,13 @@ const getBrandPerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["starRatingAvg", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
     }
 
@@ -213,6 +259,7 @@ const getBrandPerfumes = async (req, res) => {
       result: true,
       list: perfumes,
       lastPage,
+      perfumesCnt: allPerfumeCnt,
     });
   } catch {
     res.status(400).send({
@@ -259,8 +306,17 @@ const getFragPerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["likeCnt", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
-    } //별점순 정렬
+    }
+
+    //별점순 정렬
     else if (orderType == "star") {
       perfumes = await Perfume.findAll({
         where: { fragId: fragId },
@@ -278,6 +334,13 @@ const getFragPerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["starRatingAvg", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
     }
 
@@ -304,6 +367,7 @@ const getFragPerfumes = async (req, res) => {
       result: true,
       list: perfumes,
       lastPage,
+      perfumesCnt: allPerfumeCnt,
     });
   } catch {
     res.status(400).send({
@@ -351,8 +415,17 @@ const getConcentPerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["likeCnt", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
-    } //별점순 정렬
+    }
+
+    //별점순 정렬
     else if (orderType == "star") {
       perfumes = await Perfume.findAll({
         where: { concentrationId: concentrationId },
@@ -370,6 +443,13 @@ const getConcentPerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["starRatingAvg", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
     }
 
@@ -396,6 +476,7 @@ const getConcentPerfumes = async (req, res) => {
       result: true,
       list: perfumes,
       lastPage,
+      perfumesCnt: allPerfumeCnt,
     });
   } catch {
     res.status(400).send({
@@ -446,8 +527,17 @@ const getPricePerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["likeCnt", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
-    } //별점순 정렬
+    }
+
+    //별점순 정렬
     else if (orderType == "star") {
       perfumes = await Perfume.findAll({
         where: {
@@ -470,6 +560,13 @@ const getPricePerfumes = async (req, res) => {
           "starRatingAvg",
         ],
         order: [["starRatingAvg", "DESC"]],
+        include: [
+          {
+            model: Brand,
+            attributes: ["brandName"],
+          },
+        ],
+        raw: true,
       });
     }
 
@@ -627,6 +724,26 @@ const perfumeLike = async (req, res) => {
   }
 };
 
+//가격 범위 당 향수 개수(1000원 단위) 제공 - 작업 중
+const getPricePerfumeCnt = async (req, res) => {
+  const arr = [];
+  let beforePrice = 0,
+    afterPrice = 1000;
+
+  firstPerfumes.forEach((a) => {
+    for (let i = 0; i < 130; i++) {
+      // String('Arr'+i) = []
+      if (beforePrice < a.price && a.price < afterPrice) {
+        // String('Arr'+i).push(a)
+      }
+      beforePrice = beforePrice + 1000;
+      afterPrice = afterPrice + 1000;
+    }
+  });
+
+  res.send(arr);
+};
+
 module.exports = {
   getPerfumes,
   getFilters,
@@ -636,4 +753,5 @@ module.exports = {
   getPricePerfumes,
   getPerfumeDetail,
   perfumeLike,
+  getPricePerfumeCnt,
 };
