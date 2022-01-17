@@ -89,6 +89,11 @@ const detailSearch = async (req, res) => {
       "imgUrl",
       "starRatingAvg",
     ],
+    include: {
+      model: Brand,
+      attributes: ["brandName"],
+    },
+    raw: true,
   });
 
   try {

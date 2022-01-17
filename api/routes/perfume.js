@@ -39,7 +39,7 @@ router.get("/:perfumeId", authMiddleware, PerfumeController.getPerfumeDetail);
 //향수 좋아요&좋아요 취소
 router.patch("/like/:perfumeId", authMiddleware, PerfumeController.perfumeLike);
 
-////가격 범위 당 향수 개수(1000원 단위) 제공
+////가격 범위(1000원 단위) 당 향수 개수 제공
 router.get(
   "/price/perfumeCnt",
   authMiddleware,

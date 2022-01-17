@@ -11,7 +11,7 @@ const { afterDestroy } = require("../../models/user");
 const { stringify } = require("qs");
 
 //목록 페이지에서 좋아요 개수와 별점을 실시간으로 업데이트 된 사항을 보여줘야 함
-//-> 불러올 때마다 DB에서 최신 data 꺼내가지고 보여줘야 함..
+//-> 불러올 때마다 DB에서 최신 data 꺼내가지고 보여줘야 함
 
 //서버 실행 시 향수 목록 불러오기
 let firstPerfumes = Perfume.findAll({
@@ -616,6 +616,11 @@ const getPerfumeDetail = async (req, res) => {
     //향수 상세정보 불러오기
     const perfume = await Perfume.findOne({
       where: { perfumeId: perfumeId },
+      include: {
+        model: Brand,
+        attributes: ["brandName"],
+      },
+      raw: true,
     });
 
     //유저가 좋아요 누른 향수에는 true값 넣어주기
@@ -720,7 +725,7 @@ const perfumeLike = async (req, res) => {
   }
 };
 
-//가격 범위 당 향수 개수(1000원 단위) 제공
+//가격 범위(1000원 단위) 당 향수 개수 제공
 const getPricePerfumeCnt = async (req, res) => {
   let cntArr = [];
   let beforePrice = 0,
