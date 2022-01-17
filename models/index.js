@@ -1,22 +1,60 @@
-const mongoose = require("mongoose");
+const Sequelize = require("sequelize");
+const User = require("./user");
+const Review = require("./review");
+const Perfume = require("./perfume");
+const Fragrance = require("./fragrance");
+const Brand = require("./brand");
+const Concentration = require("./concentration");
+const PerfumeLike = require("./perfumeLike");
+const ReviewLike = require("./reviewLike");
+const UserTest = require("./userTest");
+const Follow = require("./follow");
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config")[env];
 
-const connect = () => {
-    mongoose
-        .connect("mongodb://localhost:27017/perfume", {
-            // "mongodb://test:test@localhost:27017/admin"
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            ignoreUndefined: true,
-        })
-        .then(() => console.log("Database connected!"))
-        .catch((err) => {
-            console.error(err);
-        });
-};
+const db = {};
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
 
-// connect
-mongoose.connection.on("error", (err) => {
-    console.error("몽고디비 연걸 실패:", err);
-});
+db.sequelize = sequelize;
 
-module.exports = connect;
+db.User = User;
+db.Review = Review;
+db.Perfume = Perfume;
+db.Fragrance = Fragrance;
+db.Brand = Brand;
+db.Concentration = Concentration;
+db.PerfumeLike = PerfumeLike;
+db.ReviewLike = ReviewLike;
+db.UserTest = UserTest;
+db.Follow = Follow;
+
+User.init(sequelize);
+Review.init(sequelize);
+Perfume.init(sequelize);
+Fragrance.init(sequelize);
+Brand.init(sequelize);
+Concentration.init(sequelize);
+PerfumeLike.init(sequelize);
+ReviewLike.init(sequelize);
+UserTest.init(sequelize);
+Follow.init(sequelize);
+
+User.associate(db);
+Review.associate(db);
+Perfume.associate(db);
+Fragrance.associate(db);
+Brand.associate(db);
+Concentration.associate(db);
+PerfumeLike.associate(db);
+ReviewLike.associate(db);
+UserTest.associate(db);
+Follow.associate(db);
+
+db.sequelize = sequelize;
+
+module.exports = db;
