@@ -64,7 +64,7 @@ const getPerfumes = async (req, res) => {
             attributes: ["brandName"],
           },
         ],
-        raw: true, //객체의 중첩을 푸는 옵션. 그러나 객체 키가 사용하기 불편해진다. ex) perfume.['Brand.brandName']
+        raw: true, //객체의 중첩을 푸는 옵션. 그러나, 객체 키가 사용하기 불편해진다. ex) perfume.['Brand.brandName']
       });
     }
 
@@ -95,10 +95,6 @@ const getPerfumes = async (req, res) => {
       });
     }
 
-    perfumes.forEach((a) => {
-      console.log(a["Brand.brandName"]);
-    });
-
     //향수 전체 개수
     allPerfumeCnt = perfumes.length;
 
@@ -118,14 +114,14 @@ const getPerfumes = async (req, res) => {
       }
     });
 
-    res.status(200).send({
+    res.status(200).json({
       result: true,
       list: perfumes,
       lastPage,
       perfumesCnt: allPerfumeCnt,
     });
   } catch {
-    res.status(400).send({
+    res.status(400).json({
       errorMessage: "전체 향수 데이터를 가져오는데 실패하였습니다.",
     });
   }
@@ -149,12 +145,12 @@ const getFilters = async (req, res) => {
     if (filterNum == 2) {
       filter = await Concentration.findAll();
     }
-    res.status(200).send({
+    res.status(200).json({
       result: true,
       list: filter,
     });
   } catch {
-    res.status(400).send({
+    res.status(400).json({
       errorMessage: "향수 필터 데이터를 가져오는데 실패하였습니다.",
     });
   }
@@ -255,14 +251,14 @@ const getBrandPerfumes = async (req, res) => {
       }
     });
 
-    res.status(200).send({
+    res.status(200).json({
       result: true,
       list: perfumes,
       lastPage,
       perfumesCnt: allPerfumeCnt,
     });
   } catch {
-    res.status(400).send({
+    res.status(400).json({
       errorMessage: "향수 데이터를 가져오는데 실패하였습니다.",
     });
   }
@@ -363,14 +359,14 @@ const getFragPerfumes = async (req, res) => {
       }
     });
 
-    res.status(200).send({
+    res.status(200).json({
       result: true,
       list: perfumes,
       lastPage,
       perfumesCnt: allPerfumeCnt,
     });
   } catch {
-    res.status(400).send({
+    res.status(400).json({
       errorMessage: "향수 데이터를 가져오는데 실패하였습니다.",
     });
   }
@@ -472,14 +468,14 @@ const getConcentPerfumes = async (req, res) => {
       }
     });
 
-    res.status(200).send({
+    res.status(200).json({
       result: true,
       list: perfumes,
       lastPage,
       perfumesCnt: allPerfumeCnt,
     });
   } catch {
-    res.status(400).send({
+    res.status(400).json({
       errorMessage: "향수 데이터를 가져오는데 실패하였습니다.",
     });
   }
@@ -589,13 +585,13 @@ const getPricePerfumes = async (req, res) => {
       }
     });
 
-    res.status(200).send({
+    res.status(200).json({
       result: true,
       list: perfumes,
       lastPage,
     });
   } catch {
-    res.status(400).send({
+    res.status(400).json({
       errorMessage: "향수 데이터를 가져오는데 실패하였습니다.",
     });
   }
@@ -627,12 +623,12 @@ const getPerfumeDetail = async (req, res) => {
       perfume.likeBoolean = true;
     }
 
-    res.status(200).send({
+    res.status(200).json({
       result: true,
       content: perfume,
     });
   } catch {
-    res.status(400).send({
+    res.status(400).json({
       errorMessage: "향수 상세데이터를 가져오는데 실패하였습니다.",
     });
   }
@@ -718,30 +714,35 @@ const perfumeLike = async (req, res) => {
       }
     }
   } catch {
-    res.status(400).send({
+    res.status(400).json({
       errorMessage: "좋아요 오류 발생",
     });
   }
 };
 
-//가격 범위 당 향수 개수(1000원 단위) 제공 - 작업 중
+//가격 범위 당 향수 개수(1000원 단위) 제공
 const getPricePerfumeCnt = async (req, res) => {
-  const arr = [];
+  let cntArr = [];
   let beforePrice = 0,
     afterPrice = 1000;
 
-  firstPerfumes.forEach((a) => {
-    for (let i = 0; i < 130; i++) {
-      // String('Arr'+i) = []
-      if (beforePrice < a.price && a.price < afterPrice) {
-        // String('Arr'+i).push(a)
-      }
-      beforePrice = beforePrice + 1000;
-      afterPrice = afterPrice + 1000;
-    }
-  });
+  for (let i = 0; i < 130; i++) {
+    const attributesName = `${beforePrice}~${afterPrice}`;
 
-  res.send(arr);
+    cntArr[i] = new Object();
+    cntArr[i] = { [attributesName]: 0 };
+
+    firstPerfumes.forEach((a) => {
+      if (beforePrice <= a.price && a.price < afterPrice) {
+        cntArr[i][attributesName]++;
+      }
+    });
+
+    beforePrice = beforePrice + 1000;
+    afterPrice = afterPrice + 1000;
+  }
+
+  res.status(200).json({ result: true, list: cntArr });
 };
 
 module.exports = {
