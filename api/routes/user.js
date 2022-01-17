@@ -7,10 +7,6 @@ const passport = require("passport");
 const {
   userLogin,
   userRegister,
-  existEmail,
-  existNickname,
-  confirmPassword,
-  resetPassword,
   userFollow,
   getUser,
   reviewPerfume,
@@ -29,18 +25,6 @@ router.post("/login", userLogin);
 
 // 회원가입
 router.post("/register", userRegister);
-
-// 이메일 중복확인
-router.post("/email", existEmail);
-
-// 닉네임 중복확인
-router.post("/nickname", existNickname);
-
-// 비밀번호 확인
-router.post("/password", confirmPassword);
-
-// 비밀번호 찾기
-router.post("/resetpassword", resetPassword);
 
 // 카카오 로그인
 router.get("/kakao", passport.authenticate("kakao"));
