@@ -8,7 +8,8 @@ const {
 } = require("../../models");
 const { Op } = require("sequelize");
 
-const findLikeList = () => {};
+//목록 페이지에서 좋아요 개수와 별점을 실시간으로 업데이트 된 사항을 보여줘야 함
+//-> 불러올 때마다 DB에서 최신 data 꺼내가지고 보여줘야 함..
 
 //전체 향수 목록 제공
 const getPerfumes = async (req, res) => {
@@ -76,6 +77,7 @@ const getPerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -107,9 +109,7 @@ const getFilters = async (req, res) => {
     console.log(filterNum);
 
     if (filterNum == 0) {
-      filter = await Brand.findAll({
-        attributes: ["brandId", "brandName"],
-      });
+      filter = await Brand.findAll();
     }
     if (filterNum == 1) {
       filter = await Fragrance.findAll({
@@ -117,9 +117,7 @@ const getFilters = async (req, res) => {
       });
     }
     if (filterNum == 2) {
-      filter = await Concentration.findAll({
-        attributes: ["concentrationId", "concentrationName"],
-      });
+      filter = await Concentration.findAll();
     }
     res.status(200).send({
       result: true,
@@ -199,6 +197,7 @@ const getBrandPerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -289,6 +288,7 @@ const getFragPerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -380,6 +380,7 @@ const getConcentPerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -479,6 +480,7 @@ const getPricePerfumes = async (req, res) => {
     offsetCnt = scrollNum * 10;
     perfumes = perfumes.slice(offsetCnt, offsetCnt + 10);
 
+    //무한스크롤 마지막 페이지 여부
     if (offsetCnt + 10 >= allPerfumeCnt) {
       lastPage = true;
     }
@@ -504,12 +506,30 @@ const getPricePerfumes = async (req, res) => {
 
 //향수 상세정보 제공
 const getPerfumeDetail = async (req, res) => {
+  const { perfumeId } = req.params;
+  const userId = res.locals.users.userId;
   try {
-    const { perfumeId } = req.params;
+    //향수에 좋아요 누른 게 있는지 찾기
+    const checkList = await PerfumeLike.findAll({
+      where: {
+        userId: userId,
+      },
+    });
 
-    const perfume = await Perfume.findAll({
+    //좋아요 누른 향수의 향수ID 찾기
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.perfumeId));
+
+    //향수 상세정보 불러오기
+    const perfume = await Perfume.findOne({
       where: { perfumeId: perfumeId },
     });
+
+    //유저가 좋아요 누른 향수에는 true값 넣어주기
+    if (arr.includes(perfume.perfumeId)) {
+      perfume.likeBoolean = true;
+    }
+
     res.status(200).send({
       result: true,
       content: perfume,
