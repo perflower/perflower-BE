@@ -8,6 +8,9 @@ const {
 } = require("../../models");
 const { Op } = require("sequelize");
 
+//목록 페이지에서 좋아요 개수와 별점을 실시간으로 업데이트 된 사항을 보여줘야 함
+//-> 불러올 때마다 DB에서 최신 data 꺼내가지고 보여줘야 함..
+
 //전체 향수 목록 제공
 const getPerfumes = async (req, res) => {
   const userId = res.locals.users.userId;

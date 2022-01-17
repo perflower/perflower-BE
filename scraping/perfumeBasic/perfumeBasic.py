@@ -189,7 +189,7 @@ for a in range(pagesCnt):
 
                     for file, name in zip(files, stored_names):
                         s3.upload_file(file, bucketName, f'perfumes/{name}') # S3에 파일 업로드
-                        changedUrl = parse.quote(name) # Url 줏ㅎ 획득 중 - url 인코딩 실시
+                        changedUrl = parse.quote(name) # Url 주소 획득 중 - url 인코딩 실시
                         changedUrl = changedUrl.replace('%20', '+') # Url 주소 획득 중
                         imgUrl = f'https://{bucketName}.s3.ap-northeast-2.amazonaws.com/perfumes/' + changedUrl # S3에 업로드 된 Url 주소 획득
 
