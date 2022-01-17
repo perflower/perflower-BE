@@ -503,12 +503,30 @@ const getPricePerfumes = async (req, res) => {
 
 //향수 상세정보 제공
 const getPerfumeDetail = async (req, res) => {
+  const { perfumeId } = req.params;
+  const userId = res.locals.users.userId;
   try {
-    const { perfumeId } = req.params;
+    //향수에 좋아요 누른 게 있는지 찾기
+    const checkList = await PerfumeLike.findAll({
+      where: {
+        userId: userId,
+      },
+    });
 
-    const perfume = await Perfume.findAll({
+    //좋아요 누른 향수의 향수ID 찾기
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.perfumeId));
+
+    //향수 상세정보 불러오기
+    const perfume = await Perfume.findOne({
       where: { perfumeId: perfumeId },
     });
+
+    //유저가 좋아요 누른 향수에는 true값 넣어주기
+    if (arr.includes(perfume.perfumeId)) {
+      perfume.likeBoolean = true;
+    }
+
     res.status(200).send({
       result: true,
       content: perfume,
