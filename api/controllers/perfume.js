@@ -5,6 +5,7 @@ const {
   Fragrance,
   Concentration,
   PerfumeLike,
+  User,
 } = require("../../models");
 const { Op } = require("sequelize");
 const { afterDestroy } = require("../../models/user");
@@ -541,6 +542,11 @@ const perfumeLike = async (req, res) => {
             perfumeId: perfumeId,
           },
         });
+        const userLikeCnt = await PerfumeLike.count({
+          where: {
+            userId: userId,
+          },
+        });
         await Perfume.update(
           {
             likeCnt: perfumesCnt,
@@ -548,6 +554,16 @@ const perfumeLike = async (req, res) => {
           {
             where: {
               perfumeId: perfumeId,
+            },
+          }
+        );
+        await User.update(
+          {
+            likePerfumeCnt: userLikeCnt,
+          },
+          {
+            where: {
+              userId: userId,
             },
           }
         );
