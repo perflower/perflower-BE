@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth-middleware");
+const getLikeList = require("../middlewares/getLikeList");
 const PerfumeController = require("../controllers/perfume");
 
 //전체 향수 목록 출력
-router.get("/all", authMiddleware, PerfumeController.getPerfumes);
+router.get("/all", authMiddleware, getLikeList, PerfumeController.getPerfumes);
 
 //향수 필터링 필터 항목 출력
 router.get("/filter", authMiddleware, PerfumeController.getFilters);
@@ -13,6 +14,7 @@ router.get("/filter", authMiddleware, PerfumeController.getFilters);
 router.get(
   "/filter/brand/:brandId",
   authMiddleware,
+  getLikeList,
   PerfumeController.getBrandPerfumes
 );
 
@@ -20,6 +22,7 @@ router.get(
 router.get(
   "/filter/frag/:fragId",
   authMiddleware,
+  getLikeList,
   PerfumeController.getFragPerfumes
 );
 
@@ -27,14 +30,25 @@ router.get(
 router.get(
   "/filter/concent/:concentrationId",
   authMiddleware,
+  getLikeList,
   PerfumeController.getConcentPerfumes
 );
 
 //가격범위로 필터링된 향수 출력
-router.get("/filter/price", authMiddleware, PerfumeController.getPricePerfumes);
+router.get(
+  "/filter/price",
+  authMiddleware,
+  getLikeList,
+  PerfumeController.getPricePerfumes
+);
 
 //향수 상세정보 출력
-router.get("/:perfumeId", authMiddleware, PerfumeController.getPerfumeDetail);
+router.get(
+  "/:perfumeId",
+  authMiddleware,
+  getLikeList,
+  PerfumeController.getPerfumeDetail
+);
 
 //향수 좋아요&좋아요 취소
 router.patch("/like/:perfumeId", authMiddleware, PerfumeController.perfumeLike);
