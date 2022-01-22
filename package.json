@@ -1,46 +1,49 @@
 {
-    "name": "perflower",
-    "version": "1.0.0",
-    "description": "",
-    "main": "app.js",
-    "scripts": {
-        "start": "nodemon app"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/PurfumePlanet-Backend/Backend.git"
-    },
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/PurfumePlanet-Backend/Backend/issues"
-    },
-    "homepage": "https://github.com/PurfumePlanet-Backend/Backend#readme",
-    "dependencies": {
-        "aws-sdk": "^2.1057.0",
-        "axios": "^0.24.0",
-        "bcrypt": "^5.0.1",
-        "cors": "^2.8.5",
-        "dotenv": "^10.0.0",
-        "ejs": "^3.1.6",
-        "express": "^4.17.1",
-        "express-session": "^1.17.2",
-        "jsonwebtoken": "^8.5.1",
-        "korean-regexp": "^1.0.9",
-        "multer": "^1.4.4",
-        "multer-s3": "^2.10.0",
-        "mysql2": "^2.3.3",
-        "nunjucks": "^3.2.3",
-        "passport": "^0.5.2",
-        "passport-kakao": "^1.0.1",
-        "passport-local": "^1.0.0",
-        "path": "^0.12.7",
-        "qs": "^6.10.2",
-        "sequelize": "^6.12.4",
-        "sequelize-cli": "^6.3.0"
-    },
-    "devDependencies": {
-        "csvtojson": "^2.0.10",
-        "nodemon": "^2.0.15"
-    }
+  "name": "perflower",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PurfumePlanet-Backend/Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PurfumePlanet-Backend/Backend/issues"
+  },
+  "homepage": "https://github.com/PurfumePlanet-Backend/Backend#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1057.0",
+    "axios": "^0.24.0",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "jsonwebtoken": "^8.5.1",
+    "korean-regexp": "^1.0.9",
+    "multer": "^1.4.4",
+    "multer-s3": "^2.10.0",
+    "mysql2": "^2.3.3",
+    "nunjucks": "^3.2.3",
+    "passport": "^0.5.2",
+    "passport-kakao": "^1.0.1",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "qs": "^6.10.2",
+    "sequelize": "^6.12.4",
+    "sequelize-cli": "^6.3.0"
+  },
+  "devDependencies": {
+    "csvtojson": "^2.0.10",
+    "jest": "^27.4.7",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.2"
+  }
 }

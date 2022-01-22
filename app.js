@@ -71,3 +71,5 @@ app.get("/", (req, res) => {
 app.listen(config.port, () => {
   console.log(`listening at http://localhost:${config.port}`);
 });
+
+module.exports = app;
