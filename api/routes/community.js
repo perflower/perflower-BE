@@ -1,12 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const authmiddleware = require("../middlewares/auth-middleware");
-const {
-  communityPerfume,
-  communityReview,
-} = require("../controllers/community");
+const { community } = require("../controllers/community");
 
-router.route("/hot").get(communityPerfume);
-router.route("/hotReview").get(communityReview);
+router.route("/").get(community);
 
 module.exports = router;

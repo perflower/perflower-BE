@@ -1,6 +1,5 @@
 const { Review, User, ReviewLike, Perfume } = require("../../models");
 const { Op } = require("sequelize");
-
 //리뷰등록 > trycatch 로 수정하기
 reviewPost = async (req, res) => {
   try {
@@ -17,9 +16,8 @@ reviewPost = async (req, res) => {
       seasonSummer,
       seasonFall,
       seasonWinter,
-      userId,
     } = req.body;
-    // const { userId } = res.locals.users;
+    const userId = res.locals.users.userId;
 
     const thisReview = await Review.create({
       perfumeId: perfumeId,
@@ -103,16 +101,32 @@ reviewPost = async (req, res) => {
 reviewGet = async (req, res) => {
   try {
     const { reviewId } = req.params;
-    const review = await Review.findOne({
+    const userId = res.locals.users.userId;
+    const review = await Review.findAll({
       where: { reviewId: reviewId },
+      limit: 1,
       raw: true,
     });
+    const checkList = await ReviewLike.findAll({
+      where: { userId: userId },
+      raw: true,
+    });
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.reviewId));
+    console.log(checkList);
+    console.log(arr);
+    review.forEach((a) => {
+      if (arr.includes(a.reviewId)) {
+        a.likeBoolean = true;
+      }
+    });
+
     return res.status(200).json({ result: "true", review });
   } catch (error) {
-    console.log(`리뷰 3개조회 중 발생한 에러: ${error}`);
+    console.log(`리뷰 상세조회 중 발생한 에러: ${error}`);
     return res.status(500).send({
       success: false,
-      msg: "리뷰 3개조회 중 에러가 발생했습니다",
+      msg: "리뷰 상세조회 중 에러가 발생했습니다",
     });
   }
 };
@@ -121,26 +135,8 @@ reviewGet = async (req, res) => {
 reviewGetThreeByLatest = async (req, res) => {
   try {
     const { perfumeId } = req.params;
-    const thisPerfumeReviewId = await Review.findAll({
-      where: { perfumeId: perfumeId },
-      raw: true,
-    });
-    console.log(thisPerfumeReviewId);
-    let aaa = "";
-    let qqq = "";
-    for (let i = 0; i < thisPerfumeReviewId.length; i++) {
-      aaa += thisPerfumeReviewId[i].reviewId + ",";
-      qqq += thisPerfumeReviewId[i].userId + ",";
-    }
-    //해당향수의 reviewId 구하기 결과 예 : [1,2,3,4]
-    let bb = aaa.length - 1;
-    let aaaa = aaa.substring(0, bb);
-    let aaaaa = JSON.parse("[" + aaaa + "]");
-    //리뷰작성한 userId 구하기 결과 예 : [1,2,3,4]
-    let tt = qqq.length - 1;
-    let qqqq = qqq.substring(0, tt);
-    let qqqqq = JSON.parse("[" + qqqq + "]");
-    const threeReview = await Review.findAndCountAll({
+    const userId = res.locals.users.userId;
+    const threeReview = await Review.findAll({
       where: { perfumeId: perfumeId },
       offset: 0,
       limit: 3,
@@ -154,29 +150,39 @@ reviewGetThreeByLatest = async (req, res) => {
         "starRating",
         "reviewLikeCnt",
         "createdAt",
+        "likeBoolean",
       ],
       include: [
-        // 나중에 page offset 설정( 아마 10 ?)
         {
           model: User,
-          where: { userId: { [Op.or]: qqqqq } },
-          attributes: ["userNickname", "userImgUrl", "userFrag", "createdAt"],
+          attributes: ["userId", "userNickname", "userImgUrl", "userFrag"],
         },
-      ], //차순 asc = 오름차순, desc = 내림차순
+      ],
     });
-    if (threeReview.length !== 0) {
-      return res.status(200).json({ result: "true", threeReview });
-    } else {
+
+    const checkList = await ReviewLike.findAll({
+      where: { userId: userId },
+    });
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.reviewId));
+    threeReview.forEach((a) => {
+      if (arr.includes(a.reviewId)) {
+        a.likeBoolean = true;
+      }
+    });
+
+    if (threeReview.length == 0) {
       return res.status(200).json({
-        result: "해당 향수에 대한 리뷰가 존재하지 않습니다!",
-        threeReview,
+        result: "해당 향수에 대한 리뷰가 존재하지 않습니다",
       });
+    } else {
+      return res.status(200).json({ result: "true", threeReview });
     }
   } catch (error) {
     console.log(`리뷰 3개조회 중 발생한 에러: ${error}`);
     return res.status(500).send({
       success: false,
-      msg: "리뷰 3개조회 중 에러가 발생했습니다",
+      msg: "리뷰 3개 조회 중 에러가 발생했습니다",
     });
   }
 };
@@ -185,25 +191,7 @@ reviewGetThreeByLatest = async (req, res) => {
 reviewGetThreeByPopular = async (req, res) => {
   try {
     const { perfumeId } = req.params;
-    const thisPerfumeReviewId = await Review.findAll({
-      where: { perfumeId: perfumeId },
-      raw: true,
-    });
-    console.log(thisPerfumeReviewId);
-    let aaa = "";
-    let qqq = "";
-    for (let i = 0; i < thisPerfumeReviewId.length; i++) {
-      aaa += thisPerfumeReviewId[i].reviewId + ",";
-      qqq += thisPerfumeReviewId[i].userId + ",";
-    }
-    //해당향수의 reviewId 구하기 결과 예 : [1,2,3,4]
-    let bb = aaa.length - 1;
-    let aaaa = aaa.substring(0, bb);
-    let aaaaa = JSON.parse("[" + aaaa + "]");
-    //리뷰작성한 userId 구하기 결과 예 : [1,2,3,4]
-    let tt = qqq.length - 1;
-    let qqqq = qqq.substring(0, tt);
-    let qqqqq = JSON.parse("[" + qqqq + "]");
+    const userId = res.locals.users.userId;
     const threeReview = await Review.findAll({
       where: { perfumeId: perfumeId },
       order: [["reviewLikeCnt", "DESC"]], //차순 asc = 오름차순, desc = 내림차순
@@ -218,23 +206,33 @@ reviewGetThreeByPopular = async (req, res) => {
         "starRating",
         "reviewLikeCnt",
         "createdAt",
+        "likeBoolean",
       ],
       include: [
-        // 나중에 page offset 설정( 아마 10 ?)
         {
           model: User,
-          where: { userId: { [Op.or]: qqqqq } },
-          attributes: ["userNickname", "userImgUrl", "userFrag", "createdAt"],
+          attributes: ["userId", "userNickname", "userImgUrl", "userFrag"],
         },
       ],
     });
-    if (threeReview.length !== 0) {
-      return res.status(200).json({ result: "true", threeReview });
-    } else {
+
+    const checkList = await ReviewLike.findAll({
+      where: { userId: userId },
+    });
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.reviewId));
+    threeReview.forEach((a) => {
+      if (arr.includes(a.reviewId)) {
+        a.likeBoolean = true;
+      }
+    });
+
+    if (threeReview.length == 0) {
       return res.status(200).json({
-        result: "해당 향수에 대한 리뷰가 존재하지 않습니다!",
-        threeReview,
+        result: "해당 향수에 대한 리뷰가 존재하지 않습니다",
       });
+    } else {
+      return res.status(200).json({ result: "true", threeReview });
     }
   } catch (error) {
     console.log(`리뷰 3개조회 중 발생한 에러: ${error}`);
@@ -249,33 +247,16 @@ reviewGetThreeByPopular = async (req, res) => {
 reviewGetAllByLatest = async (req, res) => {
   try {
     const { perfumeId } = req.params;
-    /*
-        해당 향수의 리뷰id들을 찾고 그 리뷰들에 대한 정보를 
-        향수 줄때 같이 준다.
-        */
-    const thisPerfumeReviewId = await Review.findAll({
-      where: { perfumeId: perfumeId },
-      raw: true,
-    });
-    console.log(thisPerfumeReviewId);
-    let aaa = "";
-    let qqq = "";
-    for (let i = 0; i < thisPerfumeReviewId.length; i++) {
-      aaa += thisPerfumeReviewId[i].reviewId + ",";
-      qqq += thisPerfumeReviewId[i].userId + ",";
-    }
-    //해당향수의 reviewId 구하기 결과 예 : [1,2,3,4]
-    let bb = aaa.length - 1;
-    let aaaa = aaa.substring(0, bb);
-    let aaaaa = JSON.parse("[" + aaaa + "]");
-    //리뷰작성한 userId 구하기 결과 예 : [1,2,3,4]
-    let tt = qqq.length - 1;
-    let qqqq = qqq.substring(0, tt);
-    let qqqqq = JSON.parse("[" + qqqq + "]");
+    const userId = res.locals.users.userId;
 
-    const allReview = await Review.findAndCountAll({
+    let limit = 10;
+    let offset = 0 + (req.query.scrollNum - 1) * limit;
+
+    const allReview = await Review.findAll({
       where: { perfumeId: perfumeId },
       order: [["reviewId", "DESC"]],
+      limit: limit,
+      offset: offset,
       raw: true,
       attributes: [
         "perfumeId",
@@ -285,23 +266,33 @@ reviewGetAllByLatest = async (req, res) => {
         "starRating",
         "reviewLikeCnt",
         "createdAt",
+        "likeBoolean",
       ],
       include: [
-        // 나중에 page offset 설정( 아마 10 ?)
         {
           model: User,
-          where: { userId: { [Op.or]: qqqqq } },
-          attributes: ["userNickname", "userImgUrl", "userFrag", "createdAt"],
+          attributes: ["userId", "userNickname", "userImgUrl", "userFrag"],
         },
       ],
     });
-    console.log(allReview);
-    if (allReview.length !== 0) {
-      return res.status(200).json({ result: "true", allReview });
-    } else {
-      return res.status(404).json({
-        result: "해당 향수에 대한 리뷰가 존재하지 않습니다!",
+
+    const checkList = await ReviewLike.findAll({
+      where: { userId: userId },
+    });
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.reviewId));
+    allReview.forEach((a) => {
+      if (arr.includes(a.reviewId)) {
+        a.likeBoolean = true;
+      }
+    });
+
+    if (allReview.length === 0) {
+      return res.status(200).json({
+        result: "해당 향수에 대한 리뷰가 존재하지 않습니다",
       });
+    } else {
+      return res.status(200).json({ result: "true", allReview });
     }
   } catch (error) {
     console.log(`리뷰 전체조회 중 발생한 에러: ${error}`);
@@ -316,33 +307,16 @@ reviewGetAllByLatest = async (req, res) => {
 reviewGetAllByPopular = async (req, res) => {
   try {
     const { perfumeId } = req.params;
-    /*
-        해당 향수의 리뷰id들을 찾고 그 리뷰들에 대한 정보를 
-        향수 줄때 같이 준다.
-        */
-    const thisPerfumeReviewId = await Review.findAll({
-      where: { perfumeId: perfumeId },
-      raw: true,
-    });
-    let aaa = "";
-    let qqq = "";
-    for (let i = 0; i < thisPerfumeReviewId.length; i++) {
-      aaa += thisPerfumeReviewId[i].reviewId + ",";
-      qqq += thisPerfumeReviewId[i].userId + ",";
-    }
-    //해당향수의 reviewId 구하기 결과 예 : [1,2,3,4]
-    let bb = aaa.length - 1;
-    let aaaa = aaa.substring(0, bb);
-    let aaaaa = JSON.parse("[" + aaaa + "]");
+    const userId = res.locals.users.userId;
 
-    //리뷰작성한 userId 구하기 결과 예 : [1,2,3,4]
-    let tt = qqq.length - 1;
-    let qqqq = qqq.substring(0, tt);
-    let qqqqq = JSON.parse("[" + qqqq + "]");
+    let limit = 10;
+    let offset = 0 + (req.query.scrollNum - 1) * limit;
 
     const allReview = await Review.findAll({
       where: { perfumeId: perfumeId },
       order: [["reviewLikeCnt", "DESC"]],
+      limit: limit,
+      offset: offset,
       raw: true,
       attributes: [
         "perfumeId",
@@ -352,31 +326,33 @@ reviewGetAllByPopular = async (req, res) => {
         "starRating",
         "reviewLikeCnt",
         "createdAt",
+        "likeBoolean",
       ],
       include: [
-        // 나중에 page offset 설정( 아마 10 ?)
         {
           model: User,
-          where: { userId: { [Op.or]: qqqqq } },
-          attributes: ["userNickname", "userImgUrl", "userFrag"],
+          attributes: ["userId", "userNickname", "userImgUrl", "userFrag"],
         },
-        // {
-        //     model: ReviewLike,
-        //     where: { reviewId: { [Op.or]: [aaaaa] } },
-        // },
       ],
     });
-    console.log(allReview);
-    const reviewCntAll = await Review.count({
-      where: { perfumeId: perfumeId },
+
+    const checkList = await ReviewLike.findAll({
+      where: { userId: userId },
     });
-    console.log(`reviewCntAll : ${reviewCntAll}`);
-    if (allReview.length !== 0) {
-      return res.status(200).json({ result: "true", allReview, reviewCntAll });
-    } else {
-      return res.status(404).json({
-        result: "해당 향수에 대한 리뷰가 존재하지 않습니다!",
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.reviewId));
+    allReview.forEach((a) => {
+      if (arr.includes(a.reviewId)) {
+        a.likeBoolean = true;
+      }
+    });
+
+    if (allReview.length == 0) {
+      return res.status(200).json({
+        result: "해당 향수에 대한 리뷰가 존재하지 않습니다",
       });
+    } else {
+      return res.status(200).json({ result: "true", allReview });
     }
   } catch (error) {
     console.log(`리뷰 전체조회 중 발생한 에러: ${error}`);
@@ -391,9 +367,8 @@ reviewGetAllByPopular = async (req, res) => {
 reviewUpdate = async (req, res) => {
   try {
     const { reviewId } = req.params;
-    const { content, userId } = req.body;
-    // const userId = res.locals.userId;
-
+    const { content } = req.body;
+    const userId = res.locals.users.userId;
     //본인확인
     const thisReview = await Review.findOne({
       where: { reviewId: reviewId },
@@ -425,8 +400,7 @@ reviewUpdate = async (req, res) => {
 reviewDelete = async (req, res) => {
   try {
     const { reviewId } = req.params;
-    const { userId } = req.body;
-    // const userId = res.locals.userId;
+    const userId = res.locals.users.userId;
 
     //본인확인
     const delReview = await Review.findOne({
@@ -543,8 +517,7 @@ reviewDelete = async (req, res) => {
 reviewLike = async (req, res) => {
   try {
     const { perfumeId, reviewId } = req.params;
-    const { userId } = req.body;
-    // const userId = res.locals.userId;
+    const userId = res.locals.users.userId;
 
     const aacc = await Review.findOne({
       where: {
@@ -609,8 +582,7 @@ reviewLike = async (req, res) => {
 reviewLikeDelete = async (req, res) => {
   try {
     const { perfumeId, reviewId } = req.params;
-    const { userId } = req.body;
-    // const userId = res.locals.userId;
+    const userId = res.locals.users.userId;
 
     const aacc = await Review.findOne({
       where: {
@@ -629,7 +601,6 @@ reviewLikeDelete = async (req, res) => {
       },
       raw: true,
     });
-    console.log(aacc);
     if (!aacc) {
       return res.status(404).json({ result: "존재하지 않는 리뷰입니다." });
     } else if (!bbcc) {
@@ -650,7 +621,6 @@ reviewLikeDelete = async (req, res) => {
           reviewId: reviewId,
         },
       });
-      console.log(thisReviewLikeCnt);
       await Review.update(
         { reviewLikeCnt: thisReviewLikeCnt },
         {

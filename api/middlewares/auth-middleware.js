@@ -4,11 +4,9 @@ const { User } = require("../../models"); // 뒤(경로)로 가서 user 호출 (
 
 module.exports = (req, res, next) => {
   // => 대신 function써도됨
-
+  console.log("미들웨어 들옴");
   const { authorization } = req.headers;
   const [tokenType, tokenValue] = authorization.split(" "); // Bearer와 토큰 값 같이나오니까 공백 기준으로 분리
-
-  console.log("미들웨어 통과");
 
   if (tokenType !== "Bearer") {
     res.status(401).send({

@@ -6,9 +6,10 @@ const {
   Follow,
   Brand,
 } = require("../../models");
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const mailer = require("../mail/passwordEmail");
 require("dotenv").config();
 
 // 로그인
@@ -55,7 +56,6 @@ const userLogin = async (req, res) => {
 async function userRegister(req, res) {
   try {
     const { userEmail, userPassword, passwordCheck, userNickname } = req.body;
-    console.log(req.body);
 
     // 공백 확인
     if (
@@ -124,6 +124,131 @@ async function userRegister(req, res) {
   }
 }
 
+// 이메일 중복확인
+const existEmail = async (req, res) => {
+  const { userEmail } = req.body;
+  if (userEmail === "") {
+    res.status(400).send({
+      errorMessage: "빈 문자열입니다.",
+    });
+    return;
+  }
+  try {
+    const exUser = await User.findOne({
+      where: {
+        userEmail: userEmail,
+      },
+    });
+    if (exUser) {
+      res.status(205).send({
+        errorMessage: "존재하는 이메일입니다.",
+      });
+      return;
+    }
+    const emailForm =
+      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+    if (emailForm.test(userEmail) !== true) {
+      res.status(400).send({
+        errorMessage: "이메일 형식으로 입력해주세요.",
+      });
+      return;
+    }
+    res.send({ result: true });
+  } catch (err) {
+    res.status(400).send({ errorMessage: "fail" });
+  }
+};
+
+// 닉네임 중복확인
+const existNickname = async (req, res) => {
+  const { userNickname } = req.body;
+  if (userNickname === "") {
+    res.status(400).send({
+      errorMessage: "빈 문자열입니다.",
+    });
+    return;
+  }
+  try {
+    const exUser = await User.findOne({
+      where: {
+        userNickname: userNickname,
+      },
+    });
+    if (exUser) {
+      res.status(205).send({
+        errorMessage: "존재하는 닉네임입니다.",
+      });
+      return;
+    }
+    res.send({ result: true });
+  } catch (err) {
+    res.status(400).send({ errorMessage: "fail" });
+  }
+};
+
+// 비밀번호 확인
+const confirmPassword = async (req, res) => {
+  const { userPassword } = req.body;
+
+  // 공백 확인
+  if (userPassword === "") {
+    res.status(400).send({
+      errorMessage: "빈 문자열입니다.",
+    });
+    return;
+  }
+  try {
+    // 패스워드 양식 확인
+    if (userPassword.length < 6) {
+      res.status(400).send({
+        errorMessage: "패스워드는 6자 이상으로 입력해주세요.",
+      });
+      return;
+    }
+    res.send({ result: true });
+  } catch (err) {
+    res.status(400).send({ errorMessage: "fail" });
+  }
+};
+
+// 비밀번호 찾기 (이메일 발송)
+const resetPassword = async (req, res) => {
+  const { userEmail } = req.body;
+  try {
+    if (userEmail === "") {
+      res.status(400).send({
+        errorMessage: "빈 문자열입니다.",
+      });
+      return;
+    }
+    const user = await User.findOne({ where: { userEmail: userEmail } });
+    console.log(user);
+    if (!user) {
+      res.status(406).send({ errorMessage: "존재하지 않는 이메일입니다" });
+      return;
+    }
+
+    // 새 비밀번호 (암호화)
+    const randomPassword = String(Math.floor(Math.random() * 1000000) + 100000);
+    const hash = await bcrypt.hash(randomPassword, 10);
+    await User.update(
+      { userPassword: hash },
+      { where: { userEmail: userEmail } }
+    );
+
+    let emailParam = {
+      toEmail: userEmail, // 수신할 이메일
+      subject: "perflower 임시 비밀번호 메일발송", // 메일 제목
+      text: `${user.userNickname} 회원님! 임시 비밀번호는 ${randomPassword} 입니다`, // 메일 내용
+    };
+
+    mailer.sendGmail(emailParam);
+
+    res.send({ result: true });
+  } catch (err) {
+    res.status(400).json({ errorMessage: "fail" });
+  }
+};
 // 카카오 콜백
 const kakaoCallback = async (req, res) => {
   try {
@@ -150,7 +275,7 @@ const kakaoCallback = async (req, res) => {
 const kakaoLogout = async (req, res) => {
   req.logout();
   req.session.destroy();
-  // res.redirect('/');
+  res.redirect("/");
 };
 
 // 유저 정보 페이지
@@ -331,7 +456,6 @@ const updateUser = async (req, res) => {
     }
     const hash = await bcrypt.hash(userPassword, 10);
 
-    // 회원가입 정보를 db에 저장
     await User.update(
       {
         userNickname: userNickname,
@@ -520,6 +644,10 @@ const userFollow = async (req, res, next) => {
 module.exports = {
   userLogin,
   userRegister,
+  existEmail,
+  existNickname,
+  confirmPassword,
+  resetPassword,
   kakaoCallback,
   kakaoLogout,
   getUser,
