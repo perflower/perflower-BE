@@ -42,4 +42,6 @@ const brand = csv()
     );
   });
 
+brand();
+
 module.exports = { brand };
