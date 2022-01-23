@@ -6,8 +6,7 @@
   "test": "cross-env NODE_ENV=test jest --watchAll",
   "scripts": {
     "start": "nodemon app",
-    "test": "jest",
-    "coverage": "jest --coverage"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -53,6 +52,7 @@
   "devDependencies": {
     "csvtojson": "^2.0.10",
     "jest": "^27.4.7",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.2"
   }
 }
