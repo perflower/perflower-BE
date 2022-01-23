@@ -15,10 +15,6 @@ module.exports = class PerfumeLike extends Sequelize.Model {
           allowNull: false,
           defaultValue: Sequelize.literal("now()"),
         },
-        updatedAt: {
-          type: Sequelize.DATE,
-          allowNull: true,
-        },
       },
       {
         sequelize,

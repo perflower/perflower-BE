@@ -13,9 +13,7 @@ const { getRegExp } = require("korean-regexp");
 //4-2. 조건 : 제목에 입력받은 값이 포함되어 있으면 결과 배열에 push한다.
 
 //서버 실행 시 향수 목록 불러오기
-let perfumes = Perfume.findAll({
-  attributes: ["perfumeName"],
-}).then((result) => {
+let perfumes = Perfume.findAll().then((result) => {
   perfumes = result;
 });
 //서버 실행 시 브랜드 목록 불러오기
@@ -42,8 +40,8 @@ const listSearch = async (req, res) => {
     brands.forEach((a) => {
       const check = a.brandName.match(wordExp); //브랜드 한글 이름에 정규식에 포함되는 문자가 있으면 결과값 반환
       const checkEng = a.engBrandName.match(wordExp); //브랜드 영어 이름에 정규식에 포함되는 문자가 있으면 결과값 반환, 정규식 마지막에 i가 붙기 때문에 대소문자 구분 X
-      //match 메소드로 결과값 반환 받은 경우(해당 문자열이 포함되는 제목이 있는 경우)
-      if (check !== null || checkEng !== null) {
+      //match 메소드로 결과값 반환 받은 경우(해당 문자열이 포함되는 제목이 있는 경우) && 최대 3개만 제공
+      if ((check !== null || checkEng !== null) && brandSearched.length < 3) {
         brandSearched.push(a);
       }
     });
@@ -141,20 +139,20 @@ const detailSearch = async (req, res) => {
   });
 
   try {
-    //검색어와 일치하는 브랜드 뽑아내기
-    //서비스 동작 : 브랜드 이름 검색 -> 검색한 브랜드 목록 제공 -> 검색 목록 클릭 시 해당 항목을 검색한 결과창으로 이동
-    brands.forEach((a) => {
-      const check = a.brandName.match(wordExp); //브랜드 한글 이름에 정규식에 포함되는 문자가 있으면 결과값 반환
-      const checkEng = a.engBrandName.match(wordExp); //브랜드 영어 이름에 정규식에 포함되는 문자가 있으면 결과값 반환, 정규식 마지막에 i가 붙기 때문에 대소문자 구분 X
-      //match 메소드로 결과값 반환 받은 경우(해당 문자열이 포함되는 제목이 있는 경우)
-      if (check !== null || checkEng !== null) {
-        brandSearched.push(a);
-      }
-    });
+    //첫 페이지에서만 브랜드 목록 제공
+    if (scrollNum == 0) {
+      brands.forEach((a) => {
+        const check = a.brandName.match(wordExp);
+        const checkEng = a.engBrandName.match(wordExp);
+        if ((check !== null || checkEng !== null) && brandSearched.length < 3) {
+          brandSearched.push(a);
+        }
+      });
+    }
 
     //검색어와 일치하는 향수 뽑아내기
     perfumes.forEach((a) => {
-      const check = a.perfumeName.match(wordExp); //향수 이름에 정규식에 포함되는 문자가 있으면 결과값 반환
+      const check = a.perfumeName.match(wordExp);
       if (check !== null) {
         perfumeSearched.push(a);
       }

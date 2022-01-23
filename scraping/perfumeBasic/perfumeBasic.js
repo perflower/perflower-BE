@@ -32,6 +32,4 @@ const perfumeBasic = csv()
     });
   });
 
-perfumeBasic();
-
 module.exports = { perfumeBasic };
