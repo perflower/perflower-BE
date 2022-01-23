@@ -6,12 +6,21 @@ const { sequelize } = require("./models");
 const session = require("express-session");
 const dotenv = require("dotenv");
 const passport = require("passport");
+const axios = require("axios");
+const nunjucks = require("nunjucks");
+const qs = require("qs");
+const redis = require("redis");
+const RedisStore = require("connect-redis")(session);
 const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("./swagger-output");
-dotenv.config();
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+dotenv.config();
 
+const redisClient = redis.createClient({
+  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+  password: process.env.REDIS_PASSWORD,
+});
 const passportConfig = require("./api/passport");
 
 const corsOptions = {
@@ -35,6 +44,7 @@ passportConfig(); // 패스포트 설정
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 app.use(
   session({
     resave: false,
@@ -44,6 +54,7 @@ app.use(
       httpOnly: true,
       secure: false,
     },
+    store: new RedisStore({ client: redisClient }),
   })
 );
 app.use(passport.initialize());
@@ -62,11 +73,20 @@ app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
   res.status(err.status || 500);
-  res.render("error");
+  // res.render("error");
 });
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/image.html");
+});
+
+app.get("/", (req, res, next) => {
+  let username = "";
+  redisClient.get("username", (err, result) => {
+    console.log(result);
+    username = result;
+  });
+  res.json({ username });
 });
 
 app.listen(config.port, () => {

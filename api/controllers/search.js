@@ -1,5 +1,5 @@
 const express = require("express");
-const { Perfume, Brand } = require("../../models");
+const { Perfume, Brand, PerfumeLike } = require("../../models");
 const { Op } = require("sequelize");
 const { getRegExp } = require("korean-regexp");
 
@@ -58,37 +58,86 @@ const listSearch = async (req, res) => {
 
     res
       .status(200)
-      .json({ result: true, perfumes: perfumeSearched, brands: brandSearched });
-  } catch {
+      .json({ result: true, brands: brandSearched, perfumes: perfumeSearched });
+  } catch (err) {
     res.status(400).json({
       errorMessage: "검색 중 오류 발생",
     });
+    console.error(err);
   }
 };
 
 //사용자가 엔터 치거나 목록 클릭 시(최종 검색 시) 들어오는 API
 //최신화된 data(좋아요 개수, 별점 등)를 보여주기 위해 새로 DB에서 data를 꺼내옴.(브랜드 제외, 향수만)
 const detailSearch = async (req, res) => {
-  const { word } = req.query;
-  const perfumeSearched = [],
+  const userId = res.locals.users.userId;
+  const { word, orderType, scrollNum } = req.query;
+  let perfumeSearched = [],
     brandSearched = []; //검색 결과를 위한 빈 배열
+  let lastPage = false; //무한페이지 마지막 페이지 여부
   const wordExp = getRegExp(word); //한글 검색 라이브러리 사용. 예를 들어 ㄷ을 입력하면 ㄷ 이후에 올 수 있는 문자 종류를 정규식으로 반환해줌
+  const commonAttribute = [
+    "perfumeId",
+    "fragId",
+    "brandId",
+    "concentrationId",
+    "perfumeName",
+    "price",
+    "likeBoolean",
+    "likeCnt",
+    "reviewCnt",
+    "imgUrl",
+    "starRatingAvg",
+  ]; //향수 속성 중 가져올 속성 목록 지정
 
   //최신 향수 목록 불러오기
-  perfumes = await Perfume.findAll({
-    attributes: [
-      "perfumeId",
-      "fragId",
-      "brandId",
-      "concentrationId",
-      "perfumeName",
-      "price",
-      "likeBoolean",
-      "likeCnt",
-      "reviewCnt",
-      "imgUrl",
-      "starRatingAvg",
-    ],
+
+  //인기순 정렬
+  if (orderType == "like") {
+    perfumes = await Perfume.findAll({
+      attributes: commonAttribute,
+      order: [["likeCnt", "DESC"]],
+      include: [
+        {
+          model: Brand,
+          attributes: ["brandName"],
+        },
+      ],
+      raw: true, //객체의 중첩을 푸는 옵션. 그러나, 객체 키가 사용하기 불편해진다. ex) perfume.['Brand.brandName']
+    });
+  }
+
+  //별점순 정렬
+  else if (orderType == "star") {
+    perfumes = await Perfume.findAll({
+      attributes: commonAttribute,
+      order: [["starRatingAvg", "DESC"]],
+      include: [
+        {
+          model: Brand,
+          attributes: ["brandName"],
+        },
+      ],
+      raw: true,
+    });
+  }
+
+  //향수에 좋아요 누른 게 있는지 찾기
+  const checkList = await PerfumeLike.findAll({
+    where: {
+      userId: userId,
+    },
+  });
+
+  //좋아요 누른 향수의 향수ID 찾기
+  const arr = [];
+  checkList.forEach((a) => arr.push(a.perfumeId));
+
+  //유저가 좋아요 누른 향수에는 true값 넣어주기
+  perfumes.forEach((a) => {
+    if (arr.includes(a.perfumeId)) {
+      a.likeBoolean = true;
+    }
   });
 
   try {
@@ -111,13 +160,30 @@ const detailSearch = async (req, res) => {
       }
     });
 
-    res
-      .status(200)
-      .json({ result: true, perfumes: perfumeSearched, brands: brandSearched });
-  } catch {
+    //향수 전체 개수
+    allPerfumeCnt = perfumeSearched.length;
+
+    //무한스크롤 시 넘길 향수
+    offsetCnt = scrollNum * 10;
+    perfumeSearched = perfumeSearched.slice(offsetCnt, offsetCnt + 10);
+
+    //무한스크롤 마지막 페이지 여부
+    if (offsetCnt + 10 >= allPerfumeCnt) {
+      lastPage = true;
+    }
+
+    res.status(200).json({
+      result: true,
+      brands: brandSearched,
+      perfumes: perfumeSearched,
+      lastPage,
+      perfumesCnt: allPerfumeCnt,
+    });
+  } catch (err) {
     res.status(400).json({
       errorMessage: "검색 중 오류 발생",
     });
+    console.error(err);
   }
 };
 

@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "test": "cross-env NODE_ENV=test jest --watchAll",
   "scripts": {
     "start": "nodemon app",
-    "test": "mocha ./test/mock-test.js --exit"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,11 +22,13 @@
     "aws-sdk": "^2.1057.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
+    "connect-redis": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.2",
     "express-session": "^1.17.2",
+    "iconv-lite": "^0.6.3",
     "jsonwebtoken": "^8.5.1",
     "korean-regexp": "^1.0.9",
     "mailer": "^0.6.7",
@@ -40,15 +43,15 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "qs": "^6.10.2",
+    "redis": "^4.0.2",
+    "redis-cli": "^2.1.2",
     "sequelize": "^6.12.4",
     "sequelize-cli": "^6.3.0",
-    "swagger-autogen": "^2.18.8",
-    "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.3.0"
+    "supertest": "^6.2.2"
   },
   "devDependencies": {
     "csvtojson": "^2.0.10",
-    "mocha": "^9.1.4",
+    "jest": "^27.4.7",
     "nodemon": "^2.0.15",
     "supertest": "^6.2.2"
   }
