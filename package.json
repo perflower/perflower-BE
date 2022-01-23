@@ -47,7 +47,8 @@
     "redis-cli": "^2.1.2",
     "sequelize": "^6.12.4",
     "sequelize-cli": "^6.3.0",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.2",
+    "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
     "csvtojson": "^2.0.10",
