@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const authmiddleware = require("../middlewares/auth-middleware");
+const authorization = require("../middlewares/auth-middleware");
 const { community } = require("../controllers/community");
 
-router.route("/").get(community);
+router.route("/").get(authorization, community);
 
 module.exports = router;
