@@ -11,6 +11,10 @@ const nunjucks = require("nunjucks");
 const qs = require("qs");
 const redis = require("redis");
 const RedisStore = require("connect-redis")(session);
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output");
+
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 dotenv.config();
 
 const redisClient = redis.createClient({

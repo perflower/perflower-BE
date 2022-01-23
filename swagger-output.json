@@ -1,0 +1,103 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "PERFLOWER API",
+    "version": "1.0.0",
+    "description": "perflower API"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "tags": [],
+  "schemes": ["http"],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "scheme": "bearer",
+      "in": "header",
+      "bearerFormat": "JWT"
+    }
+  },
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "api/user/": {
+      "post": {
+        "tags": ["USERS"],
+        "description": "로그인",
+        "consumes": "multipart/form-data",
+        "produces": "application/json",
+        "parameters": [
+          {
+            "name": "userImage",
+            "in": "formData",
+            "type": "file",
+            "description": "userImage to upload"
+          },
+          {
+            "name": "userEmail",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "confirmPassword",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userNickname",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userGender",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userAge",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userLocation",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "회원가입이 완료되었습니다."
+          },
+          "401": {
+            "description": "사용중인 닉네임입니다."
+          },
+          "402": {
+            "description": "이메일 형식이 올바르지 않습니다."
+          },
+          "403": {
+            "description": "비밀번호와 비밀번호확인을 동일하게 입력해주세요."
+          },
+          "404": {
+            "description": "비밀번호는 3자리 이상으로 작성해주세요."
+          },
+          "405": {
+            "description": "비밀번호에 아이디가 포함되어있습니다."
+          }
+        }
+      }
+    }
+  }
+}
