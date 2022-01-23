@@ -519,9 +519,9 @@ const reviewPerfume = async (req, res) => {
       for (let i = 0; i < reviewList.length; i++) {
         const perfumes = await Perfume.findOne({
           where: {
-            perfumeId: reviewList[i].reviewId,
+            perfumeId: reviewList[i].perfumeId,
           },
-          attributes: ["brandId", "perfumeName", "originImgUrl"],
+          attributes: ["perfumeId", "brandId", "perfumeName", "originImgUrl"],
           include: [
             {
               model: Brand,
@@ -564,7 +564,13 @@ const likePerfume = async (req, res) => {
           where: {
             perfumeId: likeList[i].perfumeId,
           },
-          attributes: ["brandId", "perfumeName", "price", "originImgUrl"],
+          attributes: [
+            "perfumeId",
+            "brandId",
+            "perfumeName",
+            "price",
+            "originImgUrl",
+          ],
           include: [
             {
               model: Brand,
