@@ -81,6 +81,11 @@ module.exports = class Review extends Sequelize.Model {
           type: Sequelize.DATE,
           allowNull: true,
         },
+        likeBoolean: {
+          type: Sequelize.BOOLEAN,
+          allowNull: true,
+          defaultValue: false,
+        },
       },
       {
         sequelize,
