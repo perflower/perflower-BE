@@ -6,10 +6,11 @@ const { sequelize } = require("./models");
 const session = require("express-session");
 const dotenv = require("dotenv");
 const passport = require("passport");
-const axios = require("axios");
-const nunjucks = require("nunjucks");
-const qs = require("qs");
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output");
 dotenv.config();
+
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 const passportConfig = require("./api/passport");
 
@@ -71,3 +72,5 @@ app.get("/", (req, res) => {
 app.listen(config.port, () => {
   console.log(`listening at http://localhost:${config.port}`);
 });
+
+module.exports = app;
