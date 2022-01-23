@@ -1,9 +1,11 @@
-const { Review, Perfume, User } = require("../../models");
+const { Review, Perfume, User, ReviewLike } = require("../../models");
 const { Op } = require("sequelize");
 
 //커뮤니티 이번주 HOT
 community = async (req, res) => {
   try {
+    const userId = res.locals.users.userId;
+
     const hotPopular = await User.findAll({
       order: [["followerCnt", "DESC"]],
       raw: true,
@@ -11,11 +13,20 @@ community = async (req, res) => {
       attributes: ["userId", "userNickname", "followerCnt", "userImgUrl"],
     });
 
-    const hotReview = await Review.findAll({
+    let hotReview = await Review.findAll({
       order: [["reviewLikeCnt", "DESC"]],
       raw: true,
       limit: 5,
-      attributes: ["reviewId", "reviewLikeCnt", "userId", "content"],
+      attributes: [
+        "perfumeId",
+        "reviewId",
+        "userId",
+        "reviewLikeCnt",
+        "userId",
+        "reviewLikeCnt",
+        "content",
+        "likeBoolean",
+      ],
       include: [
         {
           model: Perfume,
@@ -28,6 +39,16 @@ community = async (req, res) => {
       ],
     });
 
+    const checkList = await ReviewLike.findAll({
+      where: { userId: userId },
+    });
+    const arr = [];
+    checkList.forEach((a) => arr.push(a.reviewId));
+    hotReview.forEach((a) => {
+      if (arr.includes(a.reviewId)) {
+        a.likeBoolean = true;
+      }
+    });
     res.status(200).json({ result: "true", hotPopular, hotReview });
   } catch (error) {
     console.log(`커뮤니티 페이지 발생한 에러: ${error}`);
