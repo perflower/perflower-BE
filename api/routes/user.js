@@ -59,7 +59,7 @@ router.get("/kakao/logout", kakaoLogout);
 router.get("/:userId", authorization, getUser);
 
 // 유저 프로필 변경
-router.put("/:userId", authorization, updateUser);
+router.put("/:userId", authorization, upload.single("img"), updateUser);
 
 // 유저 삭제
 router.delete("/:userId", authorization, deleteUser);

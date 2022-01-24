@@ -413,9 +413,9 @@ const profileUpload = async (req, res) => {
 
 // 내 정보 비번,닉네임,이미지 수정하기
 const updateUser = async (req, res) => {
-  const { userNickname, nowPassword, userPassword, userImgUrl, description } =
-    req.body;
+  const { userNickname, nowPassword, userPassword, description } = req.body;
   const { userId } = res.locals.users;
+  const { location } = req.file;
 
   try {
     // 공백 확인
@@ -460,7 +460,7 @@ const updateUser = async (req, res) => {
       {
         userNickname: userNickname,
         userPassword: hash,
-        userImgUrl: userImgUrl,
+        userImgUrl: location,
         description: description,
       },
       { where: { userId: userId } }
