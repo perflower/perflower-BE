@@ -17,7 +17,7 @@ const {
   likePerfume,
   updateUser,
   deleteUser,
-  profileUpload,
+  // profileUpload,
   getFollowingList,
   getFollowerList,
   kakaoCallback,
@@ -58,8 +58,8 @@ router.get("/kakao/logout", kakaoLogout);
 // 유저 프로필 조회
 router.get("/:userId", authorization, getUser);
 
-// 유저 프로필 변경
-router.put("/:userId", authorization, upload.single("img"), updateUser);
+// 유저 프로필 수정
+router.patch("/:userId", authorization, upload.single("img"), updateUser);
 
 // 유저 삭제
 router.delete("/:userId", authorization, deleteUser);
@@ -79,7 +79,7 @@ router.get("/review/:userId", authorization, reviewPerfume);
 // 내가 찜한(좋아요) 향수 리스트
 router.get("/like/:userId", authorization, likePerfume);
 
-// 프로필 업로드
-router.post("/:userId", upload.single("img"), profileUpload);
+// // 프로필 업로드
+// router.post("/:userId", upload.single("img"), profileUpload);
 
 module.exports = router;

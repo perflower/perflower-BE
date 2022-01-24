@@ -14,7 +14,7 @@ const { getRegExp } = require("korean-regexp");
 
 //서버 실행 시 향수 목록 불러오기
 let firstPerfumes = Perfume.findAll({
-  attributes: ["perfumeName"],
+  attributes: ["perfumeName", "perfumeId", "imgUrl"],
 }).then((result) => {
   firstPerfumes = result;
 });
