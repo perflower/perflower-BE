@@ -64,10 +64,6 @@ app.use((err, req, res, next) => {
   res.render("error");
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/views/image.html");
-});
-
 app.listen(config.port, () => {
   console.log(`listening at http://localhost:${config.port}`);
 });
