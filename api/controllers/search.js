@@ -1,5 +1,5 @@
 const express = require("express");
-const { Perfume, Brand, PerfumeLike } = require("../../models");
+const { Perfume, Brand, PerfumeLike, User } = require("../../models");
 const { Op } = require("sequelize");
 const { getRegExp } = require("korean-regexp");
 
@@ -13,14 +13,20 @@ const { getRegExp } = require("korean-regexp");
 //4-2. 조건 : 제목에 입력받은 값이 포함되어 있으면 결과 배열에 push한다.
 
 //서버 실행 시 향수 목록 불러오기
-let perfumes = Perfume.findAll({
+let firstPerfumes = Perfume.findAll({
   attributes: ["perfumeName"],
 }).then((result) => {
-  perfumes = result;
+  firstPerfumes = result;
 });
 //서버 실행 시 브랜드 목록 불러오기
 let brands = Brand.findAll().then((result) => {
   brands = result;
+});
+//서버 실행 시 유저 목록 불러오기
+let firstUsers = User.findAll({
+  attributes: ["userId", "userNickname", "userImgUrl"],
+}).then((result) => {
+  firstUsers = result;
 });
 
 //사용자가 문자 입력할 때마다 들어오는 API
@@ -42,25 +48,29 @@ const listSearch = async (req, res) => {
     brands.forEach((a) => {
       const check = a.brandName.match(wordExp); //브랜드 한글 이름에 정규식에 포함되는 문자가 있으면 결과값 반환
       const checkEng = a.engBrandName.match(wordExp); //브랜드 영어 이름에 정규식에 포함되는 문자가 있으면 결과값 반환, 정규식 마지막에 i가 붙기 때문에 대소문자 구분 X
-      //match 메소드로 결과값 반환 받은 경우(해당 문자열이 포함되는 제목이 있는 경우)
-      if (check !== null || checkEng !== null) {
+      //match 메소드로 결과값 반환 받은 경우(해당 문자열이 포함되는 제목이 있는 경우) && 최대 3개만 제공
+      if ((check !== null || checkEng !== null) && brandSearched.length < 3) {
         brandSearched.push(a);
       }
     });
 
     //검색어와 일치하는 향수 뽑아내기
-    perfumes.forEach((a) => {
+    firstPerfumes.forEach((a) => {
       const check = a.perfumeName.match(wordExp); //향수 이름에 정규식에 포함되는 문자가 있으면 결과값 반환
       if (check !== null) {
         perfumeSearched.push(a);
       }
     });
 
-    res
-      .status(200)
-      .json({ result: true, brands: brandSearched, perfumes: perfumeSearched });
+    res.status(200).json({
+      result: true,
+      brands: brandSearched,
+      perfumes: perfumeSearched,
+      perfumesCnt: perfumeSearched.length,
+    });
   } catch (err) {
     res.status(400).json({
+      result: false,
       errorMessage: "검색 중 오류 발생",
     });
     console.error(err);
@@ -72,10 +82,7 @@ const listSearch = async (req, res) => {
 const detailSearch = async (req, res) => {
   const userId = res.locals.users.userId;
   const { word, orderType, scrollNum } = req.query;
-  let perfumeSearched = [],
-    brandSearched = []; //검색 결과를 위한 빈 배열
-  let lastPage = false; //무한페이지 마지막 페이지 여부
-  const wordExp = getRegExp(word); //한글 검색 라이브러리 사용. 예를 들어 ㄷ을 입력하면 ㄷ 이후에 올 수 있는 문자 종류를 정규식으로 반환해줌
+  const wordExp = getRegExp(word);
   const commonAttribute = [
     "perfumeId",
     "fragId",
@@ -89,12 +96,16 @@ const detailSearch = async (req, res) => {
     "imgUrl",
     "starRatingAvg",
   ]; //향수 속성 중 가져올 속성 목록 지정
+  let perfumeSearched = [],
+    brandSearched = [],
+    newPerfumes,
+    lastPage = false; //무한페이지 마지막 페이지 여부
 
   //최신 향수 목록 불러오기
 
   //인기순 정렬
   if (orderType == "like") {
-    perfumes = await Perfume.findAll({
+    newPerfumes = await Perfume.findAll({
       attributes: commonAttribute,
       order: [["likeCnt", "DESC"]],
       include: [
@@ -109,7 +120,7 @@ const detailSearch = async (req, res) => {
 
   //별점순 정렬
   else if (orderType == "star") {
-    perfumes = await Perfume.findAll({
+    newPerfumes = await Perfume.findAll({
       attributes: commonAttribute,
       order: [["starRatingAvg", "DESC"]],
       include: [
@@ -134,27 +145,27 @@ const detailSearch = async (req, res) => {
   checkList.forEach((a) => arr.push(a.perfumeId));
 
   //유저가 좋아요 누른 향수에는 true값 넣어주기
-  perfumes.forEach((a) => {
+  newPerfumes.forEach((a) => {
     if (arr.includes(a.perfumeId)) {
       a.likeBoolean = true;
     }
   });
 
   try {
-    //검색어와 일치하는 브랜드 뽑아내기
-    //서비스 동작 : 브랜드 이름 검색 -> 검색한 브랜드 목록 제공 -> 검색 목록 클릭 시 해당 항목을 검색한 결과창으로 이동
-    brands.forEach((a) => {
-      const check = a.brandName.match(wordExp); //브랜드 한글 이름에 정규식에 포함되는 문자가 있으면 결과값 반환
-      const checkEng = a.engBrandName.match(wordExp); //브랜드 영어 이름에 정규식에 포함되는 문자가 있으면 결과값 반환, 정규식 마지막에 i가 붙기 때문에 대소문자 구분 X
-      //match 메소드로 결과값 반환 받은 경우(해당 문자열이 포함되는 제목이 있는 경우)
-      if (check !== null || checkEng !== null) {
-        brandSearched.push(a);
-      }
-    });
+    //첫 페이지에서만 브랜드 목록 제공
+    if (scrollNum == 0) {
+      brands.forEach((a) => {
+        const check = a.brandName.match(wordExp);
+        const checkEng = a.engBrandName.match(wordExp);
+        if ((check !== null || checkEng !== null) && brandSearched.length < 3) {
+          brandSearched.push(a);
+        }
+      });
+    }
 
     //검색어와 일치하는 향수 뽑아내기
-    perfumes.forEach((a) => {
-      const check = a.perfumeName.match(wordExp); //향수 이름에 정규식에 포함되는 문자가 있으면 결과값 반환
+    newPerfumes.forEach((a) => {
+      const check = a.perfumeName.match(wordExp);
       if (check !== null) {
         perfumeSearched.push(a);
       }
@@ -181,10 +192,98 @@ const detailSearch = async (req, res) => {
     });
   } catch (err) {
     res.status(400).json({
+      result: false,
       errorMessage: "검색 중 오류 발생",
     });
     console.error(err);
   }
 };
 
-module.exports = { listSearch, detailSearch };
+//유저 검색 - 사용자가 문자 입력할 때마다 들어오는 API
+const userSearch = async (req, res) => {
+  let check,
+    userSearched = [];
+  try {
+    const { word, first } = req.query;
+    const wordExp = getRegExp(word);
+
+    //첫 번째 들어온 입력일 때
+    if (first === "true") {
+      usersCnt = await User.count(); //검색 시점의 유저 수 세기
+      //서버 실행 시점의 유저 수와 검색 시점의 유저 수가 다를 경우 => 유저 최신화
+      if (usersCnt !== firstUsers.length)
+        firstUsers = await User.findAll({
+          attributes: ["userId", "userNickname", "userImgUrl"],
+        });
+    }
+
+    firstUsers.forEach((a) => {
+      check = a.userNickname.match(wordExp);
+      if (check !== null) {
+        userSearched.push(a);
+      }
+    });
+
+    res.status(200).json({
+      result: true,
+      list: userSearched,
+      usersCnt: userSearched.length,
+    });
+  } catch (err) {
+    res.status(400).json({
+      result: false,
+      errorMessage: "유저 검색 중 오류 발생",
+    });
+    console.error(err);
+  }
+};
+
+//유저 검색 - 최종 검색 시 들어오는 API
+const userDetailSearch = async (req, res) => {
+  let check,
+    lastPage = false,
+    userSearched = [];
+
+  try {
+    const { word, scrollNum } = req.query;
+    const wordExp = getRegExp(word);
+
+    const newUsers = await User.findAll({
+      attributes: ["userId", "userNickname", "userImgUrl"],
+    });
+
+    newUsers.forEach((a) => {
+      check = a.userNickname.match(wordExp);
+      if (check !== null) {
+        userSearched.push(a);
+      }
+    });
+
+    //검색된 유저 전체 수
+    allUserCnt = userSearched.length;
+
+    //무한스크롤 시 넘길 유저
+    offsetCnt = scrollNum * 10;
+    userSearched = userSearched.slice(offsetCnt, offsetCnt + 10);
+
+    //무한스크롤 마지막 페이지 여부
+    if (offsetCnt + 10 >= allUserCnt) {
+      lastPage = true;
+    }
+
+    res.status(200).json({
+      result: true,
+      list: userSearched,
+      usersCnt: userSearched.length,
+      lastPage,
+    });
+  } catch (err) {
+    res.status(400).json({
+      result: false,
+      errorMessage: "유저 검색 중 오류 발생",
+    });
+    console.error(err);
+  }
+};
+
+module.exports = { listSearch, detailSearch, userSearch, userDetailSearch };
