@@ -54,9 +54,12 @@ const listSearch = async (req, res) => {
       }
     });
 
-    res
-      .status(200)
-      .json({ result: true, brands: brandSearched, perfumes: perfumeSearched });
+    res.status(200).json({
+      result: true,
+      brands: brandSearched,
+      perfumes: perfumeSearched,
+      perfumesCnt: perfumeSearched.length,
+    });
   } catch (err) {
     res.status(400).json({
       errorMessage: "검색 중 오류 발생",
