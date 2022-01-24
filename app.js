@@ -9,6 +9,10 @@ const passport = require("passport");
 const axios = require("axios");
 const nunjucks = require("nunjucks");
 const qs = require("qs");
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output");
+
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 dotenv.config();
 
 const passportConfig = require("./api/passport");
@@ -34,6 +38,7 @@ passportConfig(); // 패스포트 설정
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 app.use(
   session({
     resave: false,

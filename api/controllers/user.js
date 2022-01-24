@@ -6,7 +6,7 @@ const {
   Follow,
   Brand,
 } = require("../../models");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mailer = require("../mail/passwordEmail");
@@ -513,16 +513,19 @@ const reviewPerfume = async (req, res) => {
     });
     console.log(reviewList);
     let reviewPerfumeList = [];
-
     if (reviewList.length == 0) return res.send({ Message: "reviewId없음" });
     else if (reviewList !== 0) {
       for (let i = 0; i < reviewList.length; i++) {
         const perfumes = await Perfume.findOne({
           where: {
-            perfumeId: reviewList[i].reviewId,
+            perfumeId: reviewList[i].perfumeId,
           },
-          attributes: ["brandId", "perfumeName", "originImgUrl"],
+          attributes: ["perfumeId", "brandId", "perfumeName", "originImgUrl"],
           include: [
+            {
+              model: Review,
+              attributes: ["reviewId"],
+            },
             {
               model: Brand,
               attributes: ["brandName"],
@@ -556,7 +559,6 @@ const likePerfume = async (req, res) => {
     });
 
     let likePerfumeList = [];
-    let imageUrl = [];
     if (likeList.length == 0) return res.send({ errorMessage: "조회실패" });
     else if (likeList.length !== 0) {
       for (let i = 0; i < likeList.length; i++) {
@@ -564,7 +566,13 @@ const likePerfume = async (req, res) => {
           where: {
             perfumeId: likeList[i].perfumeId,
           },
-          attributes: ["brandId", "perfumeName", "price", "originImgUrl"],
+          attributes: [
+            "perfumeId",
+            "brandId",
+            "perfumeName",
+            "price",
+            "originImgUrl",
+          ],
           include: [
             {
               model: Brand,
