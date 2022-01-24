@@ -402,14 +402,14 @@ const getFollowerList = async (req, res) => {
 };
 
 // 프로필 이미지 업로드
-const profileUpload = async (req, res) => {
-  const { location } = req.file;
-  try {
-    res.json({ url: location });
-  } catch (err) {
-    res.status(400).send({ errorMessage: " 업로드 실패" });
-  }
-};
+// const profileUpload = async (req, res) => {
+//   const { location } = req.file;
+//   try {
+//     res.json({ url: location });
+//   } catch (err) {
+//     res.status(400).send({ errorMessage: " 업로드 실패" });
+//   }
+// };
 
 // 내 정보 비번,닉네임,이미지 수정하기
 const updateUser = async (req, res) => {
@@ -421,6 +421,7 @@ const updateUser = async (req, res) => {
     // 공백 확인
     if (userPassword === "" || userNickname === "") {
       res.status(412).send({
+        result: false,
         errorMessage: "빠짐 없이 입력해주세요.",
       });
       return;
@@ -429,6 +430,7 @@ const updateUser = async (req, res) => {
     // user 정보 불일치
     if (!user) {
       res.status(400).send({
+        result: false,
         errorMessage: "계정 정보가 잘못됐습니다.",
       });
       return;
@@ -436,20 +438,26 @@ const updateUser = async (req, res) => {
 
     const existUsers = await User.findOne({
       where: {
-        [Op.or]: [{ userNickname }],
+        userNickname: userNickname,
       },
     });
 
+    //변경하고자 하는 닉네임이 있는 경우
     if (existUsers) {
-      res.status(400).send({
-        errorMessage: "이미 존재하는 닉네임이 있습니다.",
-      });
-      return;
+      //닉네임이 본인 닉네임이 아닐 경우
+      if (existUsers.userId !== userId) {
+        res.status(400).send({
+          result: false,
+          errorMessage: "이미 존재하는 닉네임이 있습니다.",
+        });
+        return;
+      }
     }
 
     const result = await bcrypt.compare(nowPassword, user.userPassword);
     if (!result) {
       res.status(400).send({
+        result: false,
         errorMessage: "기존 비밀번호가 다릅니다.",
       });
       return;
@@ -471,8 +479,10 @@ const updateUser = async (req, res) => {
     });
   } catch (err) {
     res.status(400).send({
+      result: false,
       errorMessage: "프로필 수정 에러",
     });
+    console.error(err);
   }
 };
 
@@ -664,7 +674,7 @@ module.exports = {
   userFollow,
   updateUser,
   deleteUser,
-  profileUpload,
+  // profileUpload,
   getFollowingList,
   getFollowerList,
 };
