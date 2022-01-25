@@ -514,20 +514,60 @@ const updateUser = async (req, res) => {
     if (req.file) {
       imgUrl = req.file.location;
 
+      console.log(req.file.location);
+
       //s3 버킷 내의 기존 이미지 삭제
       const delFileName = user.dataValues.userImgUrl.split("/").reverse()[0];
 
-      s3.deleteObject(
+      s3.getObject(
         {
           Bucket: "perflowerbucket1",
-          Key: `profiles/${decodeURIComponent(delFileName)}`,
+          Key: `profiles/${delFileName}`,
         },
-        function (err, data) {
-          if (err) console.log(err, err.stack);
-          else console.log(data);
+        (err, data) => {
+          if (err) {
+            console.log(err);
+          } else if (data) {
+            s3.deleteObject(
+              {
+                Bucket: "perflowerbucket1",
+                Key: `profiles/${delFileName}`,
+              },
+              function (err, data) {
+                if (err) console.log(err, err.stack);
+                else console.log(data);
+              }
+            );
+          }
         }
       );
-      console.log(decodeURIComponent(delFileName));
+
+      // s3.headObject(
+      //   {
+      //     Bucket: "perflowerbucket1",
+      //     Key: `profiles/${delFileName}`,
+      //   },
+      //   function (err, metadata) {
+      //     if (err && err.name === "NotFound") {
+      //       // Handle no object on cloud here
+      //       console.log(err);
+      //     } else if (err) {
+      //       // Handle other errors here
+      //       console.log(err);
+      //     } else {
+      //       s3.deleteObject(
+      //         {
+      //           Bucket: "perflowerbucket1",
+      //           Key: `profiles/${delFileName}`,
+      //         },
+      //         function (err, data) {
+      //           if (err) console.log(err, err.stack);
+      //           else console.log(data);
+      //         }
+      //       );
+      //     }
+      //   }
+      // );
     } else imgUrl = user.dataValues.userImgUrl; // 클라에서 img 파일이 안 넘어왔을 경우에는 기존 imgUrl 사용
 
     await User.update(
