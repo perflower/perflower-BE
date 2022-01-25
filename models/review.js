@@ -73,9 +73,8 @@ module.exports = class Review extends Sequelize.Model {
           defaultValue: 0,
         },
         createdAt: {
-          type: Sequelize.DATE,
+          type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: Sequelize.literal("now()"),
         },
         updatedAt: {
           type: Sequelize.DATE,

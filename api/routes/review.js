@@ -12,7 +12,7 @@ const {
   reviewDelete,
   reviewLike,
   reviewLikeDelete,
-  test,
+  asdtest,
 } = require("../controllers/review");
 
 //리뷰등록
@@ -48,6 +48,6 @@ router
 //유저의 리뷰라이크정보전달
 
 //테스트
-router.route("/test").get(test);
+router.route("/").get(authorization, asdtest);
 
 module.exports = router;

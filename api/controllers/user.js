@@ -5,6 +5,7 @@ const {
   PerfumeLike,
   Follow,
   Brand,
+  ReviewLike,
 } = require("../../models");
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
@@ -490,18 +491,40 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { userId } = res.locals.users;
-    console.log(userId);
 
-    const exUser = await User.findOne({
+    const me = await User.findOne({
       where: { userId: userId },
+      raw: true,
     });
-    if (exUser.userId == userId) {
-      const result = await User.destroy({
-        where: { userId: userId },
+    if (me.userId !== userId) {
+      return res.status(401).json({
+        result: "본인 계정만 탈퇴가능합니다.",
       });
+    } else {
+      await Review.destroy({
+        where: {
+          userId: userId,
+        },
+      });
+      await ReviewLike.destroy({
+        where: {
+          userId: userId,
+        },
+      });
+      await Follow.destroy({
+        where: {
+          followerId: userId,
+          followingId: userId,
+        },
+      });
+      await User.destroy({
+        where: {
+          userId: userId,
+        },
+      });
+
+      res.status(200).json({ result: "탈퇴완료" });
     }
-    console.log(result);
-    res.send({ result: true });
   } catch (err) {
     console.log(err);
     res.status(400).send({
