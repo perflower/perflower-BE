@@ -9,7 +9,7 @@ module.exports = () => {
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID,
-        callbackURL: "https://perflower.co.kr//api/user/kakao/callback",
+        callbackURL: "http://localhost:5000/api/user/kakao/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -22,8 +22,18 @@ module.exports = () => {
           if (exUser) {
             done(null, exUser);
           } else {
+            //8자리 무작위 난수 생성
+            function rand(min, max) {
+              return Math.floor(Math.random() * (max - min)) + min;
+            }
+            let nickname = 0;
+
+            while (nickname.toString().length < 7) {
+              nickname = rand(1, 99999999);
+            }
+
             const newUser = await User.create({
-              userNickname: profile.username,
+              userNickname: nickname,
               kakaoId: profile.id,
               userImgUrl: profile._json.properties.profile_image,
             });
