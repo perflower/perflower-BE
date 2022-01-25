@@ -495,7 +495,13 @@ const updateUser = async (req, res) => {
 
     //비밀번호를 변경하고자 하는 경우
     if (userPassword !== undefined && nowPassword !== undefined) {
-      console.log("?");
+      if (user.dataValues.kakaoId !== 0) {
+        res.status(400).send({
+          result: false,
+          errorMessage: "카카오 계정은 비밀번호 변경이 불가능합니다.",
+        });
+        return;
+      }
       const result = await bcrypt.compare(nowPassword, user.userPassword);
 
       if (!result) {

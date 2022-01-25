@@ -9,7 +9,7 @@ module.exports = () => {
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID,
-        callbackURL: "http://localhost:5000/api/user/kakao/callback",
+        callbackURL: "https://perflower.co.kr/api/user/kakao/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
