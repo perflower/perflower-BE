@@ -9,26 +9,23 @@ module.exports = () => {
     new KakaoStrategy(
       {
         clientID: process.env.KAKAO_ID,
-        callbackURL: "http://localhost:5000/api/user/kakao/callback",
+        callbackURL: "https://perflower.co.kr//api/user/kakao/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          const res = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          });
-
+          // const res = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
+          //   headers: { Authorization: `Bearer ${accessToken}` },
+          // });
           const exUser = await User.findOne({
             where: { kakaoId: profile.id },
           });
-
           if (exUser) {
             done(null, exUser);
           } else {
             const newUser = await User.create({
-              userEmail: res.data.kakao_account.email,
-              userNickname: res.data.properties.nickname,
-              kakaoId: res.data.id,
-              userImgUrl: res.data.properties.profile_image,
+              userNickname: profile.username,
+              kakaoId: profile.id,
+              userImgUrl: profile._json.properties.profile_image,
             });
             done(null, newUser);
           }

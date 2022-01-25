@@ -96,7 +96,19 @@ async function userRegister(req, res) {
       });
       return; // return 을 해야지 본 코드에서 나감 (비번 동일하지 않을 경우 괄호 밖 코드 실행 안함)
     }
-
+    // 닉네임중복
+    const exUser = await User.findOne({
+      where: {
+        userNickname: userNickname,
+      },
+    });
+    console.log(exUser);
+    if (exUser) {
+      res.status(205).send({
+        errorMessage: "존재하는 닉네임입니다.",
+      });
+      return;
+    }
     // 이미 동일 정보가 있을 경우
     const existUsers = await User.findAll({
       // find 지원안하기 때문에 findAll로 변경
@@ -250,16 +262,20 @@ const resetPassword = async (req, res) => {
     res.status(400).json({ errorMessage: "fail" });
   }
 };
+// 카카오 로그인
 // 카카오 콜백
 const kakaoCallback = async (req, res) => {
   try {
     console.log("여기서 테스트 한번 합시다.");
     const user = req.user;
 
-    const token = jwt.sign({ userId: user.userId }, process.env.SECRET_KEY);
+    const token = jwt.sign(
+      { userId: user.userId, userNickname: user.userNickname },
+      process.env.SECRET_KEY
+    );
     const data = { user: user };
 
-    res.status(200).send({
+    res.status(200).header({ token: token }).send({
       message: "로그인에 성공하였습니다.",
       data: data,
       token: token,
@@ -283,15 +299,36 @@ const kakaoLogout = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log(userId);
     const myUserId = res.locals.users.userId;
     console.log(myUserId);
-
     const user = await User.findOne({
       where: {
         userId: userId,
       },
     });
+    const myFollow = await Follow.findOne({
+      where: { followingId: userId, followerId: myUserId },
+      attributes: ["followerId"],
+    });
+    if (!myFollow) {
+      res.send({
+        userId: user.userId,
+        userEmail: user.userEmail,
+        userNickname: user.userNickname,
+        followingCnt: user.followingCnt,
+        followerCnt: user.followerCnt,
+        likePerfumeCnt: user.likePerfumeCnt,
+        userReviewCnt: user.userReviewCnt,
+        userImgUrl: user.userImgUrl,
+        userFrag: user.userFrag,
+        description: user.description,
+      });
+      return;
+    }
+
     res.send({
+      following: myFollow.followerId,
       userId: user.userId,
       userEmail: user.userEmail,
       userNickname: user.userNickname,
@@ -416,18 +453,16 @@ const getFollowerList = async (req, res) => {
 const updateUser = async (req, res) => {
   const { userNickname, nowPassword, userPassword, description } = req.body;
   const { userId } = res.locals.users;
-  const { location } = req.file;
+  let imgUrl, hash;
+
+  //클라이언트에서 img 파일이 넘어왔을 경우
+  if (req.file) {
+    imgUrl = req.file.location;
+  }
 
   try {
-    // 공백 확인
-    if (userPassword === "" || userNickname === "") {
-      res.status(412).send({
-        result: false,
-        errorMessage: "빠짐 없이 입력해주세요.",
-      });
-      return;
-    }
     const user = await User.findOne({ where: { userId } });
+
     // user 정보 불일치
     if (!user) {
       res.status(400).send({
@@ -455,21 +490,32 @@ const updateUser = async (req, res) => {
       }
     }
 
-    const result = await bcrypt.compare(nowPassword, user.userPassword);
-    if (!result) {
-      res.status(400).send({
-        result: false,
-        errorMessage: "기존 비밀번호가 다릅니다.",
-      });
-      return;
+    //비밀번호 변경을 하지 않는 경우(기존 비번 사용)
+    hash = user.dataValues.userPassword;
+
+    //비밀번호를 변경하고자 하는 경우
+    if (userPassword !== undefined && nowPassword !== undefined) {
+      console.log("?");
+      const result = await bcrypt.compare(nowPassword, user.userPassword);
+
+      if (!result) {
+        res.status(400).send({
+          result: false,
+          errorMessage: "기존 비밀번호가 다릅니다.",
+        });
+        return;
+      }
+      hash = await bcrypt.hash(userPassword, 10);
     }
-    const hash = await bcrypt.hash(userPassword, 10);
+
+    // 클라에서 img 파일이 안 넘어왔을 경우에는 기존 imgUrl 사용
+    if (!req.file) imgUrl = user.dataValues.userImgUrl;
 
     await User.update(
       {
         userNickname: userNickname,
         userPassword: hash,
-        userImgUrl: location,
+        userImgUrl: imgUrl,
         description: description,
       },
       { where: { userId: userId } }
@@ -489,6 +535,8 @@ const updateUser = async (req, res) => {
 
 // 유저 삭제
 const deleteUser = async (req, res) => {
+  const { userId } = res.locals.users;
+  console.log(userId);
   try {
     const { userId } = res.locals.users;
 
@@ -558,6 +606,7 @@ const reviewPerfume = async (req, res) => {
             {
               model: Review,
               attributes: ["reviewId"],
+              where: { userId: userId },
             },
             {
               model: Brand,
