@@ -25,8 +25,13 @@ reviewPost = async (req, res) => {
     let date = today.getDate(); // 날짜
     let hour = today.getHours();
     let minute = today.getMinutes();
-    const dayCreated =
-      year + "년" + month + "월" + date + "일" + hour + ":" + minute;
+    if (minute < 10) {
+      dayCreated =
+        year + "년" + month + "월" + date + "일" + " " + hour + ":0" + minute;
+    } else {
+      dayCreated =
+        year + "년" + month + "월" + date + "일" + " " + hour + ":" + minute;
+    }
 
     const thisReview = await Review.create({
       userId: userId,
