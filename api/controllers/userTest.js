@@ -15,7 +15,6 @@ const { Op } = require("sequelize");
 */
 
 userTest1 = async (req, res) => {
-
   const { userSelect } = req.params;
   const userId = res.locals.users.userId;
 
@@ -745,11 +744,20 @@ userTestResult = async (req, res) => {
     let third = sorted[2][0];
     let com = first + "," + second + "," + third;
     let com2 = com.split(",");
-
     const testResult = await Fragrance.findAll({
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
+    /* 
+    향수 추천 해당 fragId 3개중에서 라이크 높은순 5개
+    const recommendPerfume = await Perfume.findAll({
+      where: { fragId: { [Op.or]: com2 } },
+      order: [["likeCnt", "DESC"]],
+      limit: 5,
+      raw: true,
+    });
+    console.log(recommendPerfume);
+    */
 
     //유저정보 업뎃
     const frag1 = testResult[0].fragName;
