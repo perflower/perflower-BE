@@ -52,16 +52,6 @@ router.get(
   kakaoCallback
 );
 
-// 카카오 로그인
-router.get("/kakao/check", passport.authenticate("checkKakaoLogin"));
-
-//카카오 로그인 확인
-router.get(
-  "/kakao/check/callback",
-  passport.authenticate("checkKakaoLogin", { failureRedirect: "/" }),
-  kakaoCallback
-);
-
 // 카카오 로그아웃
 router.get("/kakao/logout", kakaoLogout);
 

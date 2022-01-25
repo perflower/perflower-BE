@@ -4,7 +4,7 @@ const axios = require("axios");
 
 const { User } = require("../../models");
 
-const kakao = () => {
+module.exports = () => {
   passport.use(
     new KakaoStrategy(
       {
@@ -36,40 +36,4 @@ const kakao = () => {
       }
     )
   );
-};
-
-const checkKakaoLogin = () => {
-  passport.use(
-    new KakaoStrategy(
-      {
-        clientID: process.env.KAKAO_ID,
-        callbackURL: "https://perflower.co.kr//api/user/kakao/check",
-      },
-      async (accessToken, refreshToken, profile, done) => {
-        try {
-          const exUser = await User.findOne({
-            where: { kakaoId: profile.id },
-          });
-          if (exUser) {
-            done(null, exUser);
-          } else {
-            const newUser = await User.create({
-              userNickname: profile.username,
-              kakaoId: profile.id,
-              userImgUrl: profile._json.properties.profile_image,
-            });
-            done(null, newUser);
-          }
-        } catch (error) {
-          console.error(error);
-          done(error);
-        }
-      }
-    )
-  );
-};
-
-module.exports = {
-  kakao,
-  checkKakaoLogin,
 };
