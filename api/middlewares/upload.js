@@ -30,12 +30,7 @@ module.exports = multer({
     s3: s3,
     bucket: "perflowerbucket1",
     key(req, file, cb) {
-      cb(
-        null,
-        `profiles/${Date.now()}${path.basename(
-          encodeURIComponent(file.originalname)
-        )}`
-      );
+      cb(null, `profiles/${Date.now()}${path.basename(file.fieldname)}`);
     },
   }),
   fileFilter: fileFilter,
