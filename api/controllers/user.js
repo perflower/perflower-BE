@@ -11,6 +11,7 @@ const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mailer = require("../mail/passwordEmail");
+const s3 = require("../../config/s3");
 require("dotenv").config();
 
 // 로그인
@@ -455,11 +456,6 @@ const updateUser = async (req, res) => {
   const { userId } = res.locals.users;
   let imgUrl, hash;
 
-  //클라이언트에서 img 파일이 넘어왔을 경우
-  if (req.file) {
-    imgUrl = req.file.location;
-  }
-
   try {
     const user = await User.findOne({ where: { userId } });
 
@@ -514,8 +510,24 @@ const updateUser = async (req, res) => {
       hash = await bcrypt.hash(userPassword, 10);
     }
 
-    // 클라에서 img 파일이 안 넘어왔을 경우에는 기존 imgUrl 사용
-    if (!req.file) imgUrl = user.dataValues.userImgUrl;
+    //클라이언트에서 img 파일이 넘어왔을 경우
+    if (req.file) {
+      imgUrl = req.file.location;
+
+      //s3 버킷 내의 기존 이미지 삭제
+      const delFileName = user.dataValues.userImgUrl.split("/").reverse()[0];
+
+      s3.deleteObject(
+        {
+          Bucket: "perflowerbucket1",
+          Key: `profiles/${delFileName}`,
+        },
+        function (err, data) {
+          if (err) console.log(err, err.stack);
+          else console.log(data);
+        }
+      );
+    } else imgUrl = user.dataValues.userImgUrl; // 클라에서 img 파일이 안 넘어왔을 경우에는 기존 imgUrl 사용
 
     await User.update(
       {

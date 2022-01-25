@@ -2,6 +2,7 @@ const multer = require("multer");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const path = require("path");
+const s3 = require("../../config/s3");
 
 AWS.config.update({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,
@@ -26,7 +27,7 @@ const fileFilter = (req, file, cb) => {
 };
 module.exports = multer({
   storage: multerS3({
-    s3: new AWS.S3(),
+    s3: s3,
     bucket: "perflowerbucket1",
     key(req, file, cb) {
       cb(null, `profiles/${Date.now()}${path.basename(file.originalname)}`);
