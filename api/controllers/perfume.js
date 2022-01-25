@@ -438,6 +438,7 @@ const getPricePerfumes = async (req, res) => {
       result: true,
       list: perfumes,
       lastPage,
+      perfumesCnt: allPerfumeCnt,
     });
   } catch (err) {
     res.status(400).json({
@@ -591,9 +592,9 @@ const perfumeLike = async (req, res) => {
 const getPricePerfumeCnt = async (req, res) => {
   let cntArr = [];
   let beforePrice = 0,
-    afterPrice = 1000;
+    afterPrice = 5000;
   try {
-    for (let i = 0; i < 130; i++) {
+    for (let i = 0; i < 26; i++) {
       const attributesName = `${beforePrice}~${afterPrice}`;
 
       cntArr[i] = new Object();
@@ -605,8 +606,8 @@ const getPricePerfumeCnt = async (req, res) => {
         }
       });
 
-      beforePrice = beforePrice + 1000;
-      afterPrice = afterPrice + 1000;
+      beforePrice = beforePrice + 5000;
+      afterPrice = afterPrice + 5000;
     }
 
     res.status(200).json({ result: true, list: cntArr });
