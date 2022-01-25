@@ -18,8 +18,18 @@ reviewPost = async (req, res) => {
       seasonWinter,
     } = req.body;
     const userId = res.locals.users.userId;
+    let today = new Date();
+
+    let year = today.getFullYear(); // 년도
+    let month = today.getMonth() + 1; // 월
+    let date = today.getDate(); // 날짜
+    let hour = today.getHours();
+    let minute = today.getMinutes();
+    const dayCreated =
+      year + "년" + month + "월" + date + "일" + hour + ":" + minute;
 
     const thisReview = await Review.create({
+      userId: userId,
       perfumeId: perfumeId,
       content: content,
       reviewLikeCnt: reviewLikeCnt,
@@ -32,7 +42,7 @@ reviewPost = async (req, res) => {
       seasonSummer: seasonSummer,
       seasonFall: seasonFall,
       seasonWinter: seasonWinter,
-      userId: userId,
+      createdAt: dayCreated,
     });
 
     const reviewFind = await Review.count({
@@ -657,30 +667,140 @@ reviewLikeDelete = async (req, res) => {
   }
 };
 
-//include 테스트
-test = async (req, res) => {
-  const user = await User.findAll({
-    attributes: ["userId"],
-  });
-  res.json({ user });
-  // const user = await User.findOne({
-  //     include: [
-  //         {
-  //             model: Review,
-  //             //where : {perfumeId : req.params.perfumeId};
-  //             offset: 0,
-  //             limit: 3,
-  //             order: [["reviewId", "DESC"]],
-  //             attributes: ["content", "starRating"],
-  //         },
-  //         {
-  //             model: ReviewLike,
-  //         },
-  //     ],
+// 테스트
+asdtest = async (req, res) => {
+  // const { userId } = res.locals.users;
+  // const me = await User.findOne({
+  //   where: { userId: userId },
+  //   raw: true,
   // });
-  // console.log(user);
-  // res.json({ user });
+  // console.log(me);
+  // if (me.userId !== userId) {
+  //   return res.status(401).json({
+  //     result: "본인 계정만 탈퇴가능합니다.",
+  //   });
+  // } else {
+  //   let review = await Review.findAll({
+  //     where: {
+  //       userId: userId,
+  //     },
+  //     raw: true,
+  //   });
+  //   console.log(review);
+  //   let reviewIds = "";
+  //   let perfumeIds = "";
+  //   for (let i = 0; i < review.length; i++) {
+  //     console.log(review[i].reviewId);
+  //     reviewIds += review[i].reviewId + ",";
+  //     perfumeIds += review[i].perfumeId + ",";
+  //   }
+  //   reviewIds = reviewIds.slice(0, -1);
+  //   reviewIds = reviewIds.split(",");
+  //   perfumeIds = perfumeIds.slice(0, -1);
+  //   perfumeIds = perfumeIds.split(",");
+  //   console.log(reviewIds);
+  //   console.log(perfumeIds);
+  //   await Review.destroy({
+  //     where: { userId: userId },
+  //   });
+  //   //향수테이블 reviewCnt 수정
+  //   const reviewFind = await Review.count({
+  //     where: { perfumeId: { [Op.eq]: perfumeIds } },
+  //   });
+  //   //4 -> 2로 되겠지?
+  //   const ppap = await Review.findAll({
+  //     where: { perfumeId: { [Op.eq]: perfumeIds } },
+  //     raw: true,
+  //   });
+  //   console.log(ppap.length); // 아마 2
+  //   if (ppap.length == 0) {
+  //     await Perfume.update(
+  //       {
+  //         starRatingAvg: 0,
+  //         indexSexualAvg: 0,
+  //         indexToneAvg: 0,
+  //         indexBodyAvg: 0,
+  //         indexDesignAvg: 0,
+  //         seasonSpringCnt: 0,
+  //         seasonSummerCnt: 0,
+  //         seasonFallCnt: 0,
+  //         seasonWinterCnt: 0,
+  //         reviewCnt: reviewFind,
+  //       },
+  //       { where: { perfumeId: { [Op.eq]: perfumeIds } } }
+  //     );
+  //     await ReviewLike.destroy({
+  //       where: { userId: userId },
+  //     });
+  //     res.status(200).json({
+  //       result: " 해당 향수 마지막 리뷰 삭제 완료",
+  //     });
+  //   } else {
+  //     const ppapLength = ppap.length;
+  //     let sumRating = 0;
+  //     let sumSex = 0;
+  //     let sumTone = 0;
+  //     let sumBody = 0;
+  //     let sumDesign = 0;
+  //     let sumSpring = 0;
+  //     let sumSummer = 0;
+  //     let sumFall = 0;
+  //     let sumWinter = 0;
+  //     for (let i = 0; i < ppap.length; i++) {
+  //       sumRating += ppap[i].starRating;
+  //       sumSex += ppap[i].indexSexual;
+  //       sumTone += ppap[i].indexTone;
+  //       sumBody += ppap[i].indexBody;
+  //       sumDesign += ppap[i].indexDesign;
+  //       sumSpring += ppap[i].seasonSpring;
+  //       sumSummer += ppap[i].seasonSummer;
+  //       sumFall += ppap[i].seasonFall;
+  //       sumWinter += ppap[i].seasonWinter;
+  //     }
+  //     let avgRating = sumRating / ppapLength;
+  //     let avgSex = sumSex / ppapLength;
+  //     let avgTone = sumTone / ppapLength;
+  //     let avgBody = sumBody / ppapLength;
+  //     let avgDesign = sumDesign / ppapLength;
+  //     await Perfume.update(
+  //       {
+  //         starRatingAvg: avgRating,
+  //         indexSexualAvg: avgSex,
+  //         indexToneAvg: avgTone,
+  //         indexBodyAvg: avgBody,
+  //         indexDesignAvg: avgDesign,
+  //         seasonSpringCnt: sumSpring,
+  //         seasonSummerCnt: sumSummer,
+  //         seasonFallCnt: sumFall,
+  //         seasonWinterCnt: sumWinter,
+  //         reviewCnt: reviewFind,
+  //       },
+  //       { where: { perfumeId: { [Op.eq]: perfumeIds } } }
+  //     );
+  //     await ReviewLike.destroy({
+  //       where: { userId: userId },
+  //     });
+  //     const me = await User.findOne({
+  //       where: { userId: userId },
+  //       raw: true,
+  //     });
+  //     if (me.userId !== userId) {
+  //       return res.status(401).json({
+  //         result: "본인 계정만 탈퇴가능합니다.",
+  //       });
+  //     } else {
+  //       await User.destroy({
+  //         where: {
+  //           userId: userId,
+  //         },
+  //       });
+  //     }
+  //     res.status(200).json({ result: "리뷰 삭제 완료" });
+  //   }
+  //   res.status(200).json({ reviewIds, perfumeIds });
+  // }
 };
+
 module.exports = {
   reviewPost,
   reviewGet,
@@ -692,5 +812,5 @@ module.exports = {
   reviewDelete,
   reviewLike,
   reviewLikeDelete,
-  test,
+  asdtest,
 };
