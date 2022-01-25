@@ -9,18 +9,18 @@ const passport = require("passport");
 const axios = require("axios");
 const nunjucks = require("nunjucks");
 const qs = require("qs");
-const redis = require("redis");
-const RedisStore = require("connect-redis")(session);
+// const redis = require("redis");
+// const RedisStore = require("connect-redis")(session);
 const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("./swagger-output");
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 dotenv.config();
 
-const redisClient = redis.createClient({
-  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-  password: process.env.REDIS_PASSWORD,
-});
+// const redisClient = redis.createClient({
+//   url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+//   password: process.env.REDIS_PASSWORD,
+// });
 const passportConfig = require("./api/passport");
 
 const corsOptions = {
@@ -54,7 +54,7 @@ app.use(
       httpOnly: true,
       secure: false,
     },
-    store: new RedisStore({ client: redisClient }),
+    // store: new RedisStore({ client: redisClient }),
   })
 );
 app.use(passport.initialize());
@@ -62,6 +62,10 @@ app.use(passport.session());
 
 const index = require("./api/routes");
 app.use("/api", index);
+
+app.get("/kakao", (req, res, next) => {
+  res.render("kakaologin");
+});
 
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
@@ -73,7 +77,7 @@ app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
   res.status(err.status || 500);
-  // res.render("error");
+  res.render("error");
 });
 
 app.get("/", (req, res) => {
@@ -88,7 +92,9 @@ app.get("/", (req, res, next) => {
   });
   res.json({ username });
 });
-
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/views/image.html");
+});
 app.listen(config.port, () => {
   console.log(`listening at http://localhost:${config.port}`);
 });
