@@ -16,8 +16,5 @@ router.use("/perfume", perfume);
 router.use("/userTest", userTest);
 router.use("/community", community);
 router.use("/search", search);
-router.use("/test", (req, res) => {
-  res.send("no");
-});
 
 module.exports = router;

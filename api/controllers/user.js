@@ -520,13 +520,14 @@ const updateUser = async (req, res) => {
       s3.deleteObject(
         {
           Bucket: "perflowerbucket1",
-          Key: `profiles/${delFileName}`,
+          Key: `profiles/${decodeURIComponent(delFileName)}`,
         },
         function (err, data) {
           if (err) console.log(err, err.stack);
           else console.log(data);
         }
       );
+      console.log(decodeURIComponent(delFileName));
     } else imgUrl = user.dataValues.userImgUrl; // 클라에서 img 파일이 안 넘어왔을 경우에는 기존 imgUrl 사용
 
     await User.update(
