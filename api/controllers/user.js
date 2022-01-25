@@ -453,19 +453,16 @@ const getFollowerList = async (req, res) => {
 const updateUser = async (req, res) => {
   const { userNickname, nowPassword, userPassword, description } = req.body;
   const { userId } = res.locals.users;
-  const { location } = req.file;
+  let imgUrl, hash;
+
+  //클라이언트에서 img 파일이 넘어왔을 경우
+  if (req.file) {
+    imgUrl = req.file.location;
+  }
 
   try {
-    // 공백 확인
-    if (userPassword === "" || userNickname === "") {
-      res.status(412).send({
-        result: false,
-        errorMessage: "빠짐 없이 입력해주세요.",
-      });
-      return;
-    }
     const user = await User.findOne({ where: { userId } });
-    console.log(user);
+
     // user 정보 불일치
     if (!user) {
       res.status(400).send({
@@ -493,22 +490,32 @@ const updateUser = async (req, res) => {
       }
     }
 
-    const result = await bcrypt.compare(nowPassword, user.userPassword);
-    console.log(result);
-    if (!result) {
-      res.status(400).send({
-        result: false,
-        errorMessage: "기존 비밀번호가 다릅니다.",
-      });
-      return;
+    //비밀번호 변경을 하지 않는 경우(기존 비번 사용)
+    hash = user.dataValues.userPassword;
+
+    //비밀번호를 변경하고자 하는 경우
+    if (userPassword !== undefined && nowPassword !== undefined) {
+      console.log("?");
+      const result = await bcrypt.compare(nowPassword, user.userPassword);
+
+      if (!result) {
+        res.status(400).send({
+          result: false,
+          errorMessage: "기존 비밀번호가 다릅니다.",
+        });
+        return;
+      }
+      hash = await bcrypt.hash(userPassword, 10);
     }
-    const hash = await bcrypt.hash(userPassword, 10);
+
+    // 클라에서 img 파일이 안 넘어왔을 경우에는 기존 imgUrl 사용
+    if (!req.file) imgUrl = user.dataValues.userImgUrl;
 
     await User.update(
       {
         userNickname: userNickname,
         userPassword: hash,
-        userImgUrl: location,
+        userImgUrl: imgUrl,
         description: description,
       },
       { where: { userId: userId } }
