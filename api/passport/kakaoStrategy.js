@@ -28,12 +28,12 @@ module.exports = () => {
             }
             let nickname = 0;
 
-            while (nickname.toString().length < 7) {
-              nickname = rand(1, 99999999);
+            while (nickname.toString().length < 6) {
+              nickname = rand(1, 999999);
             }
 
             const newUser = await User.create({
-              userNickname: nickname,
+              userNickname: `kakao_${nickname}`,
               kakaoId: profile.id,
               userImgUrl: profile._json.properties.profile_image,
             });
