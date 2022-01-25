@@ -391,13 +391,25 @@ reviewGetAllByPopular = async (req, res) => {
 reviewUpdate = async (req, res) => {
   try {
     const { reviewId } = req.params;
-    const { content } = req.body;
+    const {
+      content,
+      starRating,
+      indexSexual,
+      indexTone,
+      indexBody,
+      indexDesign,
+      seasonSpring,
+      seasonSummer,
+      seasonFall,
+      seasonWinter,
+    } = req.body;
     const userId = res.locals.users.userId;
     //본인확인
     const thisReview = await Review.findOne({
       where: { reviewId: reviewId },
       raw: true,
     });
+    let perfumeId = thisReview.perfumeId;
     if (!thisReview) {
       return res.status(404).json({ result: "해당 리뷰가 존재하지 않습니다." });
     }
@@ -407,9 +419,74 @@ reviewUpdate = async (req, res) => {
       });
     }
     await Review.update(
-      { content: content },
+      {
+        content: content,
+        starRating: starRating,
+        indexSexual: indexSexual,
+        indexTone: indexTone,
+        indexBody: indexBody,
+        indexDesign: indexDesign,
+        seasonSpring: seasonSpring,
+        seasonSummer: seasonSummer,
+        seasonFall: seasonFall,
+        seasonWinter: seasonWinter,
+      },
       { where: { reviewId: reviewId, userId: userId } }
     );
+
+    //수정한 내용을 토대로 review table 수정
+    const reviewFind = await Review.count({
+      where: { perfumeId: perfumeId },
+    });
+    const ppap = await Review.findAll({
+      where: { perfumeId: perfumeId },
+      raw: true,
+    });
+    const ppapLength = ppap.length;
+
+    let sumRating = 0;
+    let sumSex = 0;
+    let sumTone = 0;
+    let sumBody = 0;
+    let sumDesign = 0;
+    let sumSpring = 0;
+    let sumSummer = 0;
+    let sumFall = 0;
+    let sumWinter = 0;
+    console.log(ppap);
+    for (let i = 0; i < ppap.length; i++) {
+      sumRating += ppap[i].starRating;
+      sumSex += ppap[i].indexSexual;
+      sumTone += ppap[i].indexTone;
+      sumBody += ppap[i].indexBody;
+      sumDesign += ppap[i].indexDesign;
+      sumSpring += ppap[i].seasonSpring;
+      sumSummer += ppap[i].seasonSummer;
+      sumFall += ppap[i].seasonFall;
+      sumWinter += ppap[i].seasonWinter;
+    }
+    let avgRating = sumRating / ppapLength;
+    let avgSex = sumSex / ppapLength;
+    let avgTone = sumTone / ppapLength;
+    let avgBody = sumBody / ppapLength;
+    let avgDesign = sumDesign / ppapLength;
+
+    await Perfume.update(
+      {
+        starRatingAvg: avgRating,
+        indexSexualAvg: avgSex,
+        indexToneAvg: avgTone,
+        indexBodyAvg: avgBody,
+        indexDesignAvg: avgDesign,
+        seasonSpringCnt: sumSpring,
+        seasonSummerCnt: sumSummer,
+        seasonFallCnt: sumFall,
+        seasonWinterCnt: sumWinter,
+        reviewCnt: reviewFind,
+      },
+      { where: { perfumeId: perfumeId } }
+    );
+
     return res.status(200).json({ result: "리뷰 수정 완료" });
   } catch (error) {
     console.log(`리뷰 수정 중 발생한 에러: ${error}`);
