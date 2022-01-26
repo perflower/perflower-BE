@@ -125,11 +125,11 @@ reviewGet = async (req, res) => {
       include: [
         {
           model: Perfume,
-          attributes: ["imgUrl"],
+          attributes: ["imgUrl", "perfumeName"],
         },
         {
           model: User,
-          attributes: ["userImgUrl"],
+          attributes: ["userImgUrl", "userNickname"],
         },
       ],
     });
