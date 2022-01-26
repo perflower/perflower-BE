@@ -494,7 +494,7 @@ const updateUser = async (req, res) => {
       if (user.dataValues.kakaoId !== 0) {
         res.status(400).send({
           result: false,
-          errorMessage: "카카오 계정은 비밀번호 변경이 불가능합니다.",
+          errorMessage: "소셜 계정은 비밀번호 변경이 불가능합니다.",
         });
         return;
       }
@@ -519,6 +519,7 @@ const updateUser = async (req, res) => {
       //s3 버킷 내의 기존 이미지 삭제
       const delFileName = user.dataValues.userImgUrl.split("/").reverse()[0];
 
+      //파일이 있는 경우에만 삭제, 없으면 건너뜀
       s3.getObject(
         {
           Bucket: "perflowerbucket1",
@@ -541,33 +542,6 @@ const updateUser = async (req, res) => {
           }
         }
       );
-
-      // s3.headObject(
-      //   {
-      //     Bucket: "perflowerbucket1",
-      //     Key: `profiles/${delFileName}`,
-      //   },
-      //   function (err, metadata) {
-      //     if (err && err.name === "NotFound") {
-      //       // Handle no object on cloud here
-      //       console.log(err);
-      //     } else if (err) {
-      //       // Handle other errors here
-      //       console.log(err);
-      //     } else {
-      //       s3.deleteObject(
-      //         {
-      //           Bucket: "perflowerbucket1",
-      //           Key: `profiles/${delFileName}`,
-      //         },
-      //         function (err, data) {
-      //           if (err) console.log(err, err.stack);
-      //           else console.log(data);
-      //         }
-      //       );
-      //     }
-      //   }
-      // );
     } else imgUrl = user.dataValues.userImgUrl; // 클라에서 img 파일이 안 넘어왔을 경우에는 기존 imgUrl 사용
 
     await User.update(
