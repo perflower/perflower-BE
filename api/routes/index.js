@@ -7,7 +7,7 @@ const review = require("./review");
 const community = require("./community");
 const userTest = require("./userTest");
 const search = require("./search");
-const { apiLimiter } = require("../middlewares/limiter");
+const apiLimiter = require("../middlewares/limiter");
 
 router.use(apiLimiter);
 router.use("/review", review);

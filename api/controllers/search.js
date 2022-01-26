@@ -24,7 +24,7 @@ let brands = Brand.findAll().then((result) => {
 });
 //서버 실행 시 유저 목록 불러오기
 let firstUsers = User.findAll({
-  attributes: ["userId", "userNickname", "userImgUrl"],
+  attributes: ["userId", "userNickname", "userImgUrl", "userFrag"],
 }).then((result) => {
   firstUsers = result;
 });
@@ -213,7 +213,7 @@ const userSearch = async (req, res) => {
       //서버 실행 시점의 유저 수와 검색 시점의 유저 수가 다를 경우 => 유저 최신화
       if (usersCnt !== firstUsers.length)
         firstUsers = await User.findAll({
-          attributes: ["userId", "userNickname", "userImgUrl"],
+          attributes: ["userId", "userNickname", "userImgUrl", "userFrag"],
         });
     }
 
@@ -249,7 +249,7 @@ const userDetailSearch = async (req, res) => {
     const wordExp = getRegExp(word);
 
     const newUsers = await User.findAll({
-      attributes: ["userId", "userNickname", "userImgUrl"],
+      attributes: ["userId", "userNickname", "userImgUrl", "userFrag"],
     });
 
     newUsers.forEach((a) => {
