@@ -121,6 +121,16 @@ reviewGet = async (req, res) => {
       where: { reviewId: reviewId },
       limit: 1,
       raw: true,
+      include: [
+        {
+          model: Perfume,
+          attributes: ["imgUrl"],
+        },
+        {
+          model: User,
+          attributes: ["userImgUrl"],
+        },
+      ],
     });
 
     const checkList = await ReviewLike.findAll({
