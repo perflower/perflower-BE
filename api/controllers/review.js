@@ -23,15 +23,16 @@ reviewPost = async (req, res) => {
     let year = today.getFullYear(); // 년도
     let month = today.getMonth() + 1; // 월
     let date = today.getDate(); // 날짜
-    let hour = today.getHours();
-    let minute = today.getMinutes();
-    if (minute < 10) {
-      dayCreated =
-        year + "년" + month + "월" + date + "일" + " " + hour + ":0" + minute;
-    } else {
-      dayCreated =
-        year + "년" + month + "월" + date + "일" + " " + hour + ":" + minute;
+    var hour = today.getHours();
+    if (hour < 10) {
+      hour = "0" + hour;
     }
+    var minute = today.getMinutes();
+    if (minute < 10) {
+      minute = "0" + minute;
+    }
+    const dayCreated =
+      year + "년" + month + "월" + date + "일" + " " + hour + ":" + minute;
 
     const thisReview = await Review.create({
       userId: userId,
@@ -104,6 +105,16 @@ reviewPost = async (req, res) => {
       { where: { perfumeId: perfumeId } }
     );
 
+    const userReviewCount = await Review.count({
+      where: { userId: userId },
+    });
+
+    await User.update(
+      {
+        userReviewCnt: userReviewCount,
+      },
+      { where: { userId: userId } }
+    );
     return res.status(200).json({ result: "true", thisReview });
   } catch (error) {
     console.log(`리뷰 등록 중 발생한 에러: ${error}`);
