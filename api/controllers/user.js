@@ -416,7 +416,7 @@ const getFollowerList = async (req, res) => {
 const updateUser = async (req, res) => {
   const { userNickname, nowPassword, userPassword, description } = req.body;
   const { userId } = res.locals.users;
-  let imgUrl, hash;
+  let imgUrl, hash, delFileName;
 
   try {
     const user = await User.findOne({ where: { userId } });
@@ -475,12 +475,10 @@ const updateUser = async (req, res) => {
     //클라이언트에서 img 파일이 넘어왔을 경우
     if (req.file) {
       imgUrl = req.file.location;
-
-      console.log(req.file.location);
-
       //s3 버킷 내의 기존 이미지 삭제
-      const delFileName = user.dataValues.userImgUrl.split("/").reverse()[0];
-
+      if (user.dataValues.userImgUrl !== null) {
+        delFileName = user.dataValues.userImgUrl.split("/").reverse()[0];
+      } else delFileName = null;
       //파일이 있는 경우에만 삭제, 없으면 건너뜀
       s3.getObject(
         {
@@ -676,43 +674,94 @@ const likePerfume = async (req, res) => {
 const userFollow = async (req, res, next) => {
   const userId = res.locals.users.userId;
   const targetUser = req.params.userId;
+  let myFollow, targetFollower, myFollowCnt, targetFollowerCnt;
 
   try {
     const user = await User.findOne({ where: { userId: userId } });
     console.log(user.userId); // 내 id
     console.log(targetUser); // params
 
-    const { followingCnt } = await User.findOne({
-      where: { userId: user.userId },
-    });
-    const { followerCnt } = await User.findOne({
-      where: { userId: targetUser },
-    });
-
     if (user) {
       const existUser = await Follow.findOne({
-        where: { followerId: user.userId, followingId: targetUser },
+        where: { followerId: userId, followingId: targetUser },
       });
       console.log("existUser" + existUser);
       if (!existUser) {
-        await user.addFollowings(parseInt(targetUser, 10)); // add할 상대 id
-        User.update(
-          { followingCnt: followingCnt + 1 },
+        // await user.addFollowings(parseInt(targetUser, 10)); // add할 상대 id
+        await Follow.create({
+          followerId: userId,
+          followingId: targetUser,
+        });
+
+        //follows Table의 followerId가 팔로우를 하는 사람이고, followingId가 팔로워를 당하는 사람임.
+        //그런데, users Table의 followerCnt가 팔로우 당한 숫자고, followingCnt가 팔로우를 한 숫자다..
+        //내가 팔로우하는 숫자(나의 팔로잉)
+        myFollow = await Follow.findAll({
+          where: {
+            followerId: userId,
+          },
+        });
+        myFollowCnt = myFollow.length;
+        console.log("my followCnt : ", myFollowCnt);
+
+        //상대방을 팔로우 하는 숫자(상대방 팔로워)
+        targetFollower = await Follow.findAll({
+          where: {
+            followingId: targetUser,
+          },
+        });
+        targetFollowerCnt = targetFollower.length;
+        console.log("target followerCnt : ", targetFollower.length);
+
+        await User.update(
+          { followingCnt: myFollowCnt },
           { where: { userId: user.userId } }
         );
-        User.update(
-          { followerCnt: followerCnt + 1 },
+        await User.update(
+          { followerCnt: targetFollowerCnt },
           { where: { userId: targetUser } }
         );
         res.send({ result: "팔로잉성공" });
       } else {
-        await user.removeFollowing(parseInt(targetUser, 10));
+        // await user.removeFollowing(parseInt(targetUser, 10));
+
+        await Follow.destroy({
+          where: {
+            [Op.and]: [
+              {
+                followerId: userId,
+              },
+              {
+                followingId: targetUser,
+              },
+            ],
+          },
+        });
+
+        //내가 팔로우하는 숫자(나의 팔로잉)
+        myFollow = await Follow.findAll({
+          where: {
+            followerId: userId,
+          },
+        });
+        myFollowCnt = myFollow.length;
+        console.log("my followCnt : ", myFollowCnt);
+
+        //상대방을 팔로우 하는 숫자(상대방 팔로워)
+        targetFollower = await Follow.findAll({
+          where: {
+            followingId: targetUser,
+          },
+        });
+        targetFollowerCnt = targetFollower.length;
+        console.log("target followerCnt : ", targetFollower.length);
+
         await User.update(
-          { followingCnt: followingCnt - 1 },
+          { followingCnt: myFollowCnt },
           { where: { userId: user.userId } }
         );
         await User.update(
-          { followerCnt: followerCnt - 1 },
+          { followerCnt: targetFollowerCnt },
           { where: { userId: targetUser } }
         );
         res.send({ result: "팔로잉취소" });
