@@ -454,7 +454,7 @@ const getFollowerList = async (req, res) => {
 const updateUser = async (req, res) => {
   const { userNickname, nowPassword, userPassword, description } = req.body;
   const { userId } = res.locals.users;
-  let imgUrl, hash;
+  let imgUrl, hash, delFileName;
 
   try {
     const user = await User.findOne({ where: { userId } });
@@ -513,12 +513,10 @@ const updateUser = async (req, res) => {
     //클라이언트에서 img 파일이 넘어왔을 경우
     if (req.file) {
       imgUrl = req.file.location;
-
-      console.log(req.file.location);
-
       //s3 버킷 내의 기존 이미지 삭제
-      const delFileName = user.dataValues.userImgUrl.split("/").reverse()[0];
-
+      if (user.dataValues.userImgUrl !== null) {
+        delFileName = user.dataValues.userImgUrl.split("/").reverse()[0];
+      } else delFileName = null;
       //파일이 있는 경우에만 삭제, 없으면 건너뜀
       s3.getObject(
         {
