@@ -349,54 +349,23 @@ const getUser = async (req, res) => {
   }
 };
 
-// // 내정보 페이지
-// const myUserPage = async (req, res) => {
-//   try {
-//     const { userId } = res.locals.users;
-//     console.log(userId)
-
-//     const user = await User.findOne({
-//       where: {
-//         userId: userId,
-//       },
-//     });
-//     res.send({
-//         userId: user.userId,
-//         userEmail: user.userEmail,
-//         userNickname: user.userNickname,
-//         followingCnt: user.followingCnt,
-//         followerCnt: user.followerCnt,
-//         likePerfumeCnt: user.likePerfumeCnt,
-//         userReviewCnt: user.userReviewCnt,
-//         userImgUrl: user.userImgUrl,
-//         userFrag: user.userFrag,
-
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(400).send({
-//       errorMessage: "유저 조회 실패",
-//     });
-//   }
-// }
-
 // 팔로잉 리스트
 const getFollowingList = async (req, res) => {
   const { userId } = res.locals.users;
-  console.log(userId);
+  const thisUserId = req.params.userId;
 
   const followingUserList = [];
-
   try {
     const followingList = await Follow.findAll({
-      where: { followerId: userId },
+      where: { followerId: thisUserId },
       attributes: ["followingId"],
+      raw: true,
     });
-
     for (let i = 0; i < followingList.length; i++) {
       const userList = await User.findOne({
         where: { userId: followingList[i].followingId },
         attributes: ["userId", "userNickname", "userImgUrl"],
+        raw: true,
       });
       followingUserList.push(userList);
     }
@@ -404,7 +373,7 @@ const getFollowingList = async (req, res) => {
     res.send({
       followingUserList,
     });
-  } catch {
+  } catch (err) {
     console.log(err);
     res.status(400).send({
       errorMessage: "팔로잉 조회 실패",
@@ -415,40 +384,33 @@ const getFollowingList = async (req, res) => {
 // 팔로워 리스트
 const getFollowerList = async (req, res) => {
   const { userId } = res.locals.users;
+  const thisUserId = req.params.userId;
+
   const followerUserList = [];
   try {
     const followerList = await Follow.findAll({
-      where: { followingId: userId },
+      where: { followingId: thisUserId },
       attributes: ["followerId"],
+      raw: true,
     });
-
     for (let i = 0; i < followerList.length; i++) {
       const userList = await User.findOne({
         where: { userId: followerList[i].followerId },
         attributes: ["userId", "userNickname", "userImgUrl"],
+        raw: true,
       });
       followerUserList.push(userList);
     }
     res.send({
       followerUserList,
     });
-  } catch {
+  } catch (err) {
     console.log(err);
     res.status(400).send({
       errorMessage: "팔로워 조회 실패",
     });
   }
 };
-
-// 프로필 이미지 업로드
-// const profileUpload = async (req, res) => {
-//   const { location } = req.file;
-//   try {
-//     res.json({ url: location });
-//   } catch (err) {
-//     res.status(400).send({ errorMessage: " 업로드 실패" });
-//   }
-// };
 
 // 내 정보 비번,닉네임,이미지 수정하기
 const updateUser = async (req, res) => {
@@ -698,7 +660,7 @@ const likePerfume = async (req, res) => {
 
 //팔로잉하기 / 팔로잉취소하기
 const userFollow = async (req, res, next) => {
-  const { userId } = res.locals.users;
+  const userId = res.locals.users.userId;
   const targetUser = req.params.userId;
 
   try {
