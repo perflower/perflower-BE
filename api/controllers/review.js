@@ -629,6 +629,15 @@ reviewDelete = async (req, res) => {
         await ReviewLike.destroy({
           where: { perfumeId: perfumeId, reviewId: reviewId },
         });
+
+        const reviewCnt = await Review.count({
+          where: { userId: userId },
+        });
+
+        await User.update(
+          { userReviewCnt: reviewCnt },
+          { where: { userId: userId } }
+        );
         res.status(200).json({ result: "리뷰 삭제 완료" });
       }
     }
