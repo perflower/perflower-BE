@@ -735,6 +735,7 @@ userTestResult = async (req, res) => {
       where: { userId: userId },
       order: [["userId", "DESC"]],
       raw: true,
+      rjsdn,
     });
     let userTestArray = Object.entries(zz);
     await userTestArray.splice(10, 2);
@@ -755,6 +756,11 @@ userTestResult = async (req, res) => {
       order: [["likeCnt", "DESC"]],
       limit: 5,
       raw: true,
+      attributes : [
+        "perfumeId",
+        "perfumeName",
+        "imgUrl",
+      ]
     });
     console.log(recommendPerfume);
     */
