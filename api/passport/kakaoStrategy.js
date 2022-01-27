@@ -28,8 +28,8 @@ module.exports = () => {
             }
             let nickname = 0;
 
-            while (nickname.toString().length < 6) {
-              nickname = rand(1, 999999);
+            while (nickname.toString().length < 7) {
+              nickname = rand(1, 9999999);
             }
 
             const newUser = await User.create({

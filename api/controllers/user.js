@@ -579,7 +579,6 @@ const reviewPerfume = async (req, res) => {
   try {
     const { userId } = req.params;
     console.log("파람" + userId);
-    console.log("내id" + res.locals.users.userId);
     const reviewList = await Review.findAll({
       where: {
         userId: userId,
@@ -594,7 +593,7 @@ const reviewPerfume = async (req, res) => {
           where: {
             perfumeId: reviewList[i].perfumeId,
           },
-          attributes: ["perfumeId", "brandId", "perfumeName", "originImgUrl"],
+          attributes: ["perfumeId", "brandId", "perfumeName", "imgUrl"],
           include: [
             {
               model: Review,
@@ -646,7 +645,7 @@ const likePerfume = async (req, res) => {
             "brandId",
             "perfumeName",
             "price",
-            "originImgUrl",
+            "imgUrl",
           ],
           include: [
             {
