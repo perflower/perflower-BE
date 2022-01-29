@@ -9,8 +9,6 @@
 
 ## 🎮 서비스 소개
 
----
-
 <br/>
 
 🪐 [WebSite 바로가기](https://perflower.co.kr/)
@@ -21,15 +19,11 @@
 
 ## 🗃 프로젝트 아키텍처
 
----
-
 <img width="1052" alt="스크린샷 2022-01-29 오후 2 55 39" src="https://user-images.githubusercontent.com/57748284/151649485-e62f4a0a-0739-4591-ac82-ff60818f4565.png">
 
 <br/>
 
 ## 👨‍👨‍👦‍👦 팀원
-
----
 
 <br/>
 
@@ -52,8 +46,6 @@
 | Reverse Proxy | <img src = "https://img.shields.io/badge/nginx-%23009639.svg?flat-square&logo=nginx&logoColor=white"/>                                                    |
 
 ## 📔 라이브러리
-
----
 
 <br/>
 
@@ -84,8 +76,6 @@
 
 ## 💾 DB ERD
 
----
-
 <br/>
 
 <details markdown ="1">
@@ -97,8 +87,6 @@
 <br/>
 
 ## 🛠 Issue & Trouble Shooting
-
----
 
 <br/>
 
