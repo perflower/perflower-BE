@@ -19,7 +19,7 @@ module.exports = class Review extends Sequelize.Model {
           allowNull: false,
         },
         content: {
-          type: Sequelize.STRING,
+          type: Sequelize.STRING(400),
           allowNull: false,
         },
         reviewLikeCnt: {
