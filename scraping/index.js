@@ -4,15 +4,8 @@ const brand = async () => require("./brand/brand");
 const concentration = async () => require("./concentration/concentration");
 
 (async function () {
-    await perfumeBasic();
-    await concentration();
-    await fragrance();
-    await brand();
+  await perfumeBasic();
+  await concentration();
+  await fragrance();
+  await brand();
 })();
-
-// module.exports = {
-//     perfumeBasic,
-//     fragrance,
-//     brand,
-//     concentration,
-// };
