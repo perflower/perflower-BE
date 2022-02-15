@@ -13,13 +13,15 @@
 
 🪐 [WebSite 바로가기](https://perflower.co.kr/)
 
+🪁 [서비스 시연영상](https://www.youtube.com/watch?v=Qsn-HQOLLU8)
+
 향수에 관한 정보들을 기록 및 공유하고, 테스트를 통해 어울리는 향을 추천해주는 향수 커뮤니티 서비스입니다.
 
 <br/>
 
 ## 🗃 프로젝트 아키텍처
 
-<img width="1052" alt="스크린샷 2022-01-29 오후 2 55 39" src="https://user-images.githubusercontent.com/57748284/151649485-e62f4a0a-0739-4591-ac82-ff60818f4565.png">
+<img width="884" alt="스크린샷 2022-02-15 오후 12 33 22" src="https://user-images.githubusercontent.com/57748284/153990001-f688cfb1-3184-4444-9356-7617f6433dd4.png">
 
 <br/>
 
@@ -39,7 +41,7 @@
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Runtime       | <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=white"/>                                                   |
 | Framework     | <img src="https://img.shields.io/badge/Express-000000?style=flat-square&logo=Express&logoColor=white"/>                                                   |
-| Language      | <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/>                                             |
+| Language      | <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/> <img alt="Python" src ="https://img.shields.io/badge/Python-3776AB.svg?&style=flat-square&logo=Python&logoColor=white"/>                                            |
 | Database      | <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>                                                       |
 | Storage       | <img src="https://img.shields.io/badge/AWS S3-FF9900?style=flat-square"/> <img src="https://img.shields.io/badge/AWS RDS-FF9900?style=flat-square"/>      |
 | Server        | <img src = "https://img.shields.io/badge/AWS EC2-FF9900?style=flat-square"/> <img src = "https://img.shields.io/badge/AWS ELB-FF9900?style=flat-square"/> |
