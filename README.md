@@ -45,7 +45,7 @@
 | Database      | <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>                                                       |
 | Storage       | <img src="https://img.shields.io/badge/AWS S3-FF9900?style=flat-square"/> <img src="https://img.shields.io/badge/AWS RDS-FF9900?style=flat-square"/>      |
 | Server        | <img src = "https://img.shields.io/badge/AWS EC2-FF9900?style=flat-square"/> 
-| Reverse Proxy | <img src = "https://img.shields.io/badge/AWS ELB-FF9900?style=flat-square"/> |                                                 |
+| Reverse Proxy | <https://img.shields.io/badge/nginx-%23009639.svg?flat-square&logo=nginx&logoColor=white"/> |                                                 
 
 ## 📔 라이브러리
 
