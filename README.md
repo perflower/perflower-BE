@@ -21,7 +21,7 @@
 
 ## 🗃 프로젝트 아키텍처
 
-<img width="884" alt="스크린샷 2022-02-15 오후 12 33 22" src="https://user-images.githubusercontent.com/89950049/154428303-e87aeceb-604b-4821-8ce9-53afab78ce76.png">
+<img width="884" alt="스크린샷 2022-02-15 오후 12 33 22" src="https://user-images.githubusercontent.com/57748284/155245887-ee53e2c6-814c-4c59-af16-d3c7398e5615.png">
 
 
 <br/>
