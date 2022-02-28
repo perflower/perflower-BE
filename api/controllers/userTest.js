@@ -19,7 +19,6 @@ userTest1 = async (req, res) => {
   const userId = res.locals.users.userId;
 
   try {
-    console.log("들옴");
     await UserTest.findOrCreate({
       where: { userId: userId },
       raw: true,
@@ -39,7 +38,7 @@ userTest1 = async (req, res) => {
         { where: { userId: userId } }
       );
     }
-    console.log("들옴2");
+
     if (userSelect == 2) {
       await UserTest.increment(
         {
@@ -80,7 +79,6 @@ userTest1 = async (req, res) => {
       order: [["userId", "DESC"]],
       raw: true,
     });
-    console.log(zz);
     let userTestArray = Object.entries(zz);
     await userTestArray.splice(10, 2);
     let sorted = userTestArray.sort((a, b) => b[1] - a[1]);
@@ -89,13 +87,11 @@ userTest1 = async (req, res) => {
     let third = sorted[2][0];
     let com = first + "," + second + "," + third;
     let com2 = com.split(",");
-    console.log(com2);
 
     const testResult = await Fragrance.findAll({
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
-    console.log(testResult);
     return res.status(200).json({
       result: `유저 : ${userId}, 1번 테스트 ${userSelect}번 선택 `,
       testResult,
@@ -171,7 +167,6 @@ userTest2 = async (req, res) => {
     let userTestArray = Object.entries(zz);
     await userTestArray.splice(10, 2);
     let sorted = userTestArray.sort((a, b) => b[1] - a[1]);
-    console.log(sorted);
     let first = sorted[0][0];
     let second = sorted[1][0];
     let third = sorted[2][0];
@@ -182,7 +177,6 @@ userTest2 = async (req, res) => {
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
-    console.log(testResult);
     return res.status(200).json({
       result: `유저 : ${userId}, 2번 테스트 ${userSelect}번 선택 `,
       testResult,
@@ -262,7 +256,6 @@ userTest3 = async (req, res) => {
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
-    console.log(testResult);
     return res.status(200).json({
       result: `유저 : ${userId}, 3번 테스트 ${userSelect}번 선택 `,
       testResult,
@@ -347,7 +340,6 @@ userTest4 = async (req, res) => {
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
-    console.log(testResult);
     return res.status(200).json({
       result: `유저 : ${userId}, 4번 테스트 ${userSelect}번 선택 `,
       testResult,
@@ -427,7 +419,6 @@ userTest5 = async (req, res) => {
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
-    console.log(testResult);
     return res.status(200).json({
       result: `유저 : ${userId}, 5번 테스트 ${userSelect}번 선택 `,
       testResult,
@@ -505,7 +496,6 @@ userTest6 = async (req, res) => {
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
-    console.log(testResult);
     return res.status(200).json({
       result: `유저 : ${userId}, 6번 테스트 ${userSelect}번 선택 `,
       testResult,
@@ -587,7 +577,6 @@ userTest7 = async (req, res) => {
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
-    console.log(testResult);
     return res.status(200).json({
       result: `유저 : ${userId}, 7번 테스트 ${userSelect}번 선택 `,
       testResult,
@@ -668,7 +657,6 @@ userTest8 = async (req, res) => {
       where: { fragId: { [Op.or]: com2 } },
       raw: true,
     });
-    console.log(testResult);
     return res.status(200).json({
       result: `유저 : ${userId}, 8번 테스트 ${userSelect}번 선택 `,
       testResult,
