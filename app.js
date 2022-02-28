@@ -61,10 +61,6 @@ app.use(passport.session());
 const index = require("./api/routes");
 app.use("/api", index);
 
-app.get("/kakao", (req, res, next) => {
-  res.render("kakaologin");
-});
-
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
   error.status = 404;
@@ -77,9 +73,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render("error");
 });
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/views/image.html");
-});
+
 app.listen(config.port, () => {
   console.log(`listening at http://localhost:${config.port}`);
 });
