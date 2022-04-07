@@ -17,7 +17,7 @@ const brand = csv()
       });
     });
 
-    //배열 내 중복값 제거(미사용)
+    //배열 내 중복값 제거
     //객체 배열은 중복값 제거가 안된다.. 이유는?
     const set = new Set(perfumesByBrand);
     const uniqueArr = [...set];
@@ -32,6 +32,12 @@ const brand = csv()
         perfumesByBrand.findIndex(
           (item2, idx2) => item1.brandName == item2.brandName
         ) == idx1
+    );
+
+    //객체 배열 중복값 제거 방법 2
+    //JSON.stringify로 객체를 JSON 문자열로 변환하면 Set으로 거를 수가 있다.
+    console.log(
+      [...new Set(perfumesByBrand.map(JSON.stringify))].map(JSON.parse)
     );
 
     result.forEach((a) =>
