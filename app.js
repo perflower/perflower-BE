@@ -17,12 +17,6 @@ dotenv.config();
 
 const passportConfig = require("./api/passport");
 
-// const corsOptions = {
-//   "Access-Control-Allow-Origin": "https://perf",
-//   "Access-Control-Request-Method": "POST, GET, DELETE, PATCH, PUT",
-//   "Access-Control-Request-Headers": "X-Custom-Header",
-//   credentials: true,
-// };
 app.use(
   cors({
     origin: ["https://perflower.co.kr", "http://localhost:3000"],

@@ -1,4 +1,4 @@
-const { Review, Perfume, User, ReviewLike } = require("../../models");
+const { Review, Perfume, User, ReviewLike, Follow } = require("../../models");
 const { Op } = require("sequelize");
 
 //커뮤니티 이번주 HOT
@@ -39,15 +39,27 @@ community = async (req, res) => {
       ],
     });
 
+    const followList = await Follow.findAll({
+      where: { followerId: userId },
+    });
+
+    console.log(followList);
+
     const checkList = await ReviewLike.findAll({
       where: { userId: userId },
     });
-    const arr = [];
+
+    const arr = [],
+      arr2 = [];
     checkList.forEach((a) => arr.push(a.reviewId));
+    followList.forEach((a) => arr2.push(a.followingId));
     hotReview.forEach((a) => {
       if (arr.includes(a.reviewId)) {
         a.likeBoolean = true;
       }
+      if (arr2.includes(a.userId)) {
+        a.followBoolean = true;
+      } else a.followBoolean = false;
     });
     res.status(200).json({ result: "true", hotPopular, hotReview });
   } catch (error) {
