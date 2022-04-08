@@ -19,8 +19,8 @@ jobs:
       - name: Run scripts in server
         uses: appleboy/ssh-action@master
         with:
-          key: ${{ secrets.SSH_KEY }}
           host: ${{ secrets.HOST }}
+          key: ${{ secrets.SSH_KEY }}
           username: ${{ secrets.USER }}
           script: |
             cd perflower-BE
