@@ -24,7 +24,3 @@ jobs:
           username: ${{ secrets.USER }}
           script: |
             cd perflower-BE
-            git reset --hard HEAD~1
-            git fetch
-            git pull
-            pm2 reload 0
