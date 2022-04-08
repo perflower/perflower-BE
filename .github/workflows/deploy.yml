@@ -3,11 +3,11 @@
 name: deploy
 
 # Controls when the workflow will run
-on:
+on: [push]
   # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches:
-      - main
+  #push:
+    #branches:
+      #- main
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -23,7 +23,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           script: |
-            cd server
+            cd perflower-BE
             git reset --hard
             git fetch
             git pull
