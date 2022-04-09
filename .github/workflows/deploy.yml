@@ -15,16 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Repository checkout
+        uses: actions/checkout@v2
       - name: Run scripts in server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.4
         with:
-          key: ${{ secrets.SSH_KEY }}
           host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
           username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
-            cd server
-            git reset --hard
-            git fetch
-            git pull
-            pm2 restart 0
+            cd perflower-BE
+            sudo git fetch
+            sudo git pull
+            sudo pm2 reload 0
