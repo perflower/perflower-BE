@@ -27,7 +27,6 @@ jobs:
           script: |
             cd perflower-BE
             sudo -s
-            git reset --hard
             git fetch
             git pull
             sudo pm2 reload 0
