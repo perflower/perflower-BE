@@ -1,19 +1,32 @@
-name: build apple
+# This is a basic workflow to help you get started with Actions
 
+name: deploy
+
+# Controls when the workflow will run
 on: [push]
+  # Triggers the workflow on push or pull request events but only for the main branch
+  #push:
+    #branches:
+      #- main
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  React-Build-ssh-action:
+  SSH:
     runs-on: ubuntu-latest
-    name: Build
+
     steps:
-      - name: SSH Remote Commands
-        uses: appleboy/ssh-action@v0.1.4        
+      - name: Repository checkout
+        uses: actions/checkout@v2
+      - name: Run scripts in server
+        uses: appleboy/ssh-action@v0.1.4
         with:
-          host: ${{ secrets.HOST }}          
+          host: ${{ secrets.HOST }}
+          port: 22
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
-          port: 22
-          timeout: 40s  # 30초 기본        
           script: |
-            echo "테스트 출력"
+            cd perflower-BE
+            git reset --hard HEAD~1
+            git fetch
+            git pull
+            pm2 reload 0
