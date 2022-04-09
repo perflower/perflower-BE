@@ -26,6 +26,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd perflower-BE
+            sudo -s
             git reset --hard
             git fetch
             git pull
